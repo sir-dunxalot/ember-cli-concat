@@ -17,7 +17,7 @@ npm install --save-dev ember-cli-concat
 
 And remove the main `<script>` and `<link rel="stylesheet">` tags from your app's main HTML file (usually `app/index.html`):
 
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
@@ -48,7 +48,7 @@ And remove the main `<script>` and `<link rel="stylesheet">` tags from your app'
 
 Several options are made available for you to customize the addon. They can be set in your app's Brocfile as follows:
 
-```
+```js
 var app = new EmberApp({
   'ember-cli-concat': {
     footer: null,
@@ -58,13 +58,14 @@ var app = new EmberApp({
     outputFileName: 'app',
     wrapScriptsInFunction: true
   }
+});
 ```
 
-### footer
+#### footer
 
 The string to add to the end of all concatenated files. Usually this is a comment. For example:
 
-```
+```js
 string: '// Copyright © I Am Devloper 2014'
 ```
 
@@ -73,7 +74,7 @@ string: '// Copyright © I Am Devloper 2014'
 @default null
 
 
-### forceConcatination
+#### forceConcatination
 
 An override the developer can utilize to concatinate regardless of the environment. Useful for debuggin purpuses.
 
@@ -82,11 +83,11 @@ An override the developer can utilize to concatinate regardless of the environme
 @default false
 
 
-### header
+#### header
 
 The string to add to the start of all concatenated files. Usually this is a comment. For example:
 
-```
+```js
 string: '// Author: I Am Devloper'
 ```
 
@@ -95,13 +96,13 @@ string: '// Author: I Am Devloper'
 @default null
 
 
-### outputDir
+#### outputDir
 
 The output directory that the concatenated files will be saved to. Define it as a relative path with no opening or closing slashes. For example:
 
 `outputDir` is combined with `outputFileName` to determine the full file path for saving concatenated files.
 
-```
+```js
 outputDir: 'assets'
 // or
 outputDir: 'assets/public'
@@ -112,17 +113,17 @@ outputDir: 'assets/public'
 @default 'assets'
 
 
-### outputFileName
+#### outputFileName
 
 The name of the concatenated file that will hold the styles or script for your project. Define it as a string with no file extention. This addon will automatically append the require file extentions. For example:
 
-```
+```js
 outputFileName: 'app' // Results in app.css and app.js being created
 ```
 
 The full file path is determine by `outputFileName` and `outputDir`. For example:
 
-```
+```js
 outputDir: 'assets',
 outputFileName: 'app'
 // Results in assets/app.css and assets/app.js being created
@@ -133,7 +134,7 @@ outputFileName: 'app'
 @default 'app'
 
 
-### wrapScriptsInFunction
+#### wrapScriptsInFunction
 
 Whether or not to wrap the concatenated javascript in an eval statement.
 
