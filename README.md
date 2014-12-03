@@ -93,9 +93,11 @@ The string to add to the start of all concatenated files. Usually this is a comm
 string: '// Author: I Am Devloper'
 ```
 
-@property footer
-@type String
-@default null
+Property | value
+---------|--------
+name     | header
+type     | String
+default  | null
 
 
 #### outputDir
@@ -110,9 +112,11 @@ outputDir: 'assets'
 outputDir: 'assets/public'
 ```
 
-@property outputDir
-@type String
-@default 'assets'
+Property | value
+---------|--------
+name     | outputDir
+type     | String
+default  | 'assets'
 
 
 #### outputFileName
@@ -131,19 +135,22 @@ outputFileName: 'app'
 // Results in assets/app.css and assets/app.js being created
 ```
 
-@property outputFileName
-@type String
-@default 'app'
+Property | value
+---------|--------
+name     | outputFileName
+type     | String
+default  | 'app'
 
 
 #### wrapScriptsInFunction
 
 Whether or not to wrap the concatenated javascript in an eval statement.
 
-@property wrapScriptsinFunction
-@type Boolean
-@default true
-
+Property | value
+---------|--------
+name     | wrapScriptsinFunction
+type     | Boolean
+default  | true
 
 ## Issues
 
