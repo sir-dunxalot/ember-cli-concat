@@ -64,15 +64,32 @@ module.exports = {
   postprocessTree: function(type, tree) {
     var paths = this.app.options.outputPaths;
 
+    var cleanPath = function(path) {
+      return path.replace(/^\//, '').replace(/\/$/, '');
+    }
+
     var concatenatedScripts = concat(tree, {
       allowNone: true,
-      inputFiles: [paths.vendor.js, paths.app.js],
-      outputFile: this.outputDir + '/' + this.outputFileName + '.js';
+      inputFiles: [cleanPath(paths.vendor['js']), cleanPath(paths.app['js'])],
+      outputFile: '/' + cleanPath(this.outputDir) + '/' + this.outputFileName + '.js',
       // header: '/* Concatenated using https://github.com/sir-dunxalot/ember-cli-concat */',
-      wrapInFunction: false,
     });
 
-    var workingTree = mergeTrees([tree, concatenatedScripts]);
+    var styleInputFiles = [cleanPath(paths.vendor['css'])];
+    var appCssPaths = paths.app['css'];
+
+    for (var path in appCssPaths) {
+      styleInputFiles.push(cleanPath(appCssPaths[path]));
+    }
+
+    var concatenatedStyles = concat(tree, {
+      allowNone: true,
+      inputFiles: styleInputFiles,
+      outputFile: '/' + cleanPath(this.outputDir) + '/' + this.outputFileName + '.css',
+      wrapInFunction: false
+    });
+
+    var workingTree = mergeTrees([tree, concatenatedScripts, concatenatedStyles]);
 
     return workingTree;
   }
