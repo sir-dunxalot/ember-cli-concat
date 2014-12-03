@@ -161,25 +161,38 @@ module.exports = {
 
     /* Helper function to return string that willbe placed in the DOM */
 
-    var asset = function(type, assetPath) {
-      if (typeof assetPath !== 'string') {
-        // Reference: http://www.ember-cli.com/#asset-compilation
-        assetPath = assetPath['app'];
+    var asset = function(assetType, assetPath) {
+      if (assetType === 'script') {
+        return '<script src="' + assetPath + '"></script>';
+      } else {
+        return '<link rel="stylesheet" href="' + assetPath + '">';
       }
-
-      return '<' + type + ' src="' + assetPath + '"></' + type + '>';
     }
 
     /* Helper function to determine which assets to load */
 
-    var addAssets = function(type) {
-      var ext = type === 'script' ? 'js' : 'css';
+    var addAssets = function(assetType) {
+      var ext = assetType === 'script' ? 'js' : 'css';
+      var appAssets = [];
+      var appPaths, vendorAssets;
 
       if (shouldConcatFiles) {
-        return asset(type, 'assets/' + _this.outputFileName + '.' + ext);
+        return asset(assetType, 'assets/' + _this.outputFileName + '.' + ext);
       } else {
-        // Passes something like: asset('script', 'assets/vendor.js')
-        return asset(type, paths.vendor[ext]) + asset(type, paths.app[ext]);
+        vendorAssets = asset(assetType, paths.vendor[ext]);
+        appPaths = paths.app[ext];
+
+        /* Allow for multiple stylesheets because the app tree's CSS uses a KVP relationship */
+
+        if (typeof appPaths !== 'string') {
+          for (var path in appPaths) {
+            appAssets.push(asset(assetType, appPaths[path]));
+          }
+        } else {
+          appAssets = asset(assetType, appPaths);
+        }
+
+        return vendorAssets + appAssets;
       }
     }
 
@@ -224,8 +237,6 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
-
-    console.log(this.app);
 
     /* If we're not concatinating anything, just return the original tree */
 

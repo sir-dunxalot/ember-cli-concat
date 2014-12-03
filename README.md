@@ -1,6 +1,9 @@
 # Ember-cli-concat
 
-This README outlines the details of collaborating on this Ember addon.
+`ember-cli-concat` is an Ember CLI addon that:
+- Automatically concatinates your javascript files into a single js file
+- Automatically concatinates your stylesheets into a single css file
+- Automatically adds the relevant `<script>` and `<style>` tags to your index.html file
 
 ## Installation
 
