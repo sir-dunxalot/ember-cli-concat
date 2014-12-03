@@ -69,7 +69,7 @@ The string to add to the end of all concatenated files. Usually this is a commen
 string: '// Copyright © I Am Devloper 2014'
 ```
 
-Property | value
+Property | Value
 ---------|--------
 name     | footer
 type     | String
@@ -80,9 +80,11 @@ default  | null
 
 An override the developer can utilize to concatinate regardless of the environment. Useful for debuggin purpuses.
 
-@property forceConcatination
-@type Boolean
-@default false
+Property | Value
+---------|--------
+name     | forceConcatination
+type     | Boolean
+default  | false
 
 
 #### header
@@ -93,7 +95,7 @@ The string to add to the start of all concatenated files. Usually this is a comm
 string: '// Author: I Am Devloper'
 ```
 
-Property | value
+Property | Value
 ---------|--------
 name     | header
 type     | String
@@ -112,7 +114,7 @@ outputDir: 'assets'
 outputDir: 'assets/public'
 ```
 
-Property | value
+Property | Value
 ---------|--------
 name     | outputDir
 type     | String
@@ -135,7 +137,7 @@ outputFileName: 'app'
 // Results in assets/app.css and assets/app.js being created
 ```
 
-Property | value
+Property | Value
 ---------|--------
 name     | outputFileName
 type     | String
@@ -146,7 +148,7 @@ default  | 'app'
 
 Whether or not to wrap the concatenated javascript in an eval statement.
 
-Property | value
+Property | Value
 ---------|--------
 name     | wrapScriptsinFunction
 type     | Boolean
