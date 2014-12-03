@@ -69,9 +69,10 @@ The string to add to the end of all concatenated files. Usually this is a commen
 string: '// Copyright © I Am Devloper 2014'
 ```
 
-@property footer
-@type String
-@default null
+---------|--------
+property | footer
+type     | String
+default  | null
 
 
 #### forceConcatination
