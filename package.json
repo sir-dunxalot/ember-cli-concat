@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-concat",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -10,11 +10,11 @@
     "build": "ember build",
     "test": "ember test"
   },
-  "repository": "",
+  "repository": "https://github.com/sir-dunxalot/ember-cli-concat",
   "engines": {
     "node": ">= 0.10.0"
   },
-  "author": "",
+  "author": "Duncan Walker",
   "license": "MIT",
   "devDependencies": {
     "broccoli-asset-rev": "^1.0.0",
@@ -34,9 +34,14 @@
     "express": "^4.8.5",
     "glob": "^4.0.5"
   },
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Concatinate Ember CLI's multiple scripts and styles into single js and css files, respectively.",
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "ember",
+    "ember-cli",
+    "concatinate",
+    "vendor",
+    "performance"
   ],
   "ember-addon": {
     "configPath": "tests/dummy/config"

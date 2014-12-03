@@ -72,6 +72,16 @@ module.exports = {
   footer: null,
 
   /**
+  An override the developer can utilize to concatinate regardless of the environment. Useful for debuggin purpuses.
+
+  @property forceConcatination
+  @type Boolean
+  @default false
+  */
+
+  forceConcatination: false,
+
+  /**
   The string to add to the start of all concatenated files. Usually this is a comment. For example:
 
   ```
@@ -196,9 +206,7 @@ module.exports = {
 
     this.app = app;
 
-    if (app.env.toString() !== 'development') { // CHANGE BACK TO === after dev
-
-    } else {
+    if (app.env.toString() !== 'development' || this.forceConcatination) {
       shouldConcatFiles = true;
     }
 
@@ -216,6 +224,8 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
+
+    console.log(this.app);
 
     /* If we're not concatinating anything, just return the original tree */
 
