@@ -88,7 +88,7 @@ module.exports = {
   string: '// Author: I Am Devloper'
   ```
 
-  @property footer
+  @property header
   @type String
   @default null
   */
@@ -146,7 +146,7 @@ module.exports = {
   wrapScriptsInFunction: true,
 
   /**
-  Append `<style>` and `<script>` tags to the app's HTML file to load only the assets we require.
+  Append `<link>` and `<script>` tags to the app's HTML file to load only the assets we require.
 
   The contentFor hook is run once for each `content-for` in our application. `head` and `body`, which are the two we hook onto, are standard to Ember CLI builds and are found in the app's main HTML filem which is `app/index.html` by default.
 
