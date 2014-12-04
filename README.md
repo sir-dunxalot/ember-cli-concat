@@ -52,7 +52,7 @@ Several options are made available for you to customize the addon. They can be s
 
 ```js
 var app = new EmberApp({
-  'ember-cli-concat': {
+  emberCliConcat: {
     footer: null,
     forceConcatination: false,
     header: null,
