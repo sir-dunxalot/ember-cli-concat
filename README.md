@@ -1,11 +1,13 @@
 # Ember-cli-concat
 
 `ember-cli-concat` is an Ember CLI addon that:
-- Automatically concatinates your javascript files into a single js file for production
-- Automatically concatinates your stylesheets into a single css file for production
+- Concatenates your javascript files into a single js file for production
+- Concatenates your stylesheets into a single css file for production
 - Automatically adds the relevant `<script>` and `<style>` tags to your index.html file
 
 In other words, in production builds `vendor.css` and `app-name.css` will become `app.css`, and the same for the javascript files. This addon also handles the `<script>` and `<link rel="stylesheet">` tags in your index.html file so you don't have to worry about requesting assets that don't exist.
+
+**By default concatenation will only happen in production builds.**
 
 ## Installation
 
@@ -69,22 +71,18 @@ The string to add to the end of all concatenated files. Usually this is a commen
 string: '// Copyright © I Am Devloper 2014'
 ```
 
-Property | Value
----------|--------
-name     | footer
-type     | String
-default  | null
+@property footer
+@type String
+@default null
 
 
 #### forceConcatination
 
-An override the developer can utilize to concatinate regardless of the environment. Useful for debuggin purpuses.
+An override the developer can utilize to concatenate regardless of the environment. Useful for debugging purposes.
 
-Property | Value
----------|--------
-name     | forceConcatination
-type     | Boolean
-default  | false
+@property forceConcatination
+@type Boolean
+@default false
 
 
 #### header
@@ -95,11 +93,9 @@ The string to add to the start of all concatenated files. Usually this is a comm
 string: '// Author: I Am Devloper'
 ```
 
-Property | Value
----------|--------
-name     | header
-type     | String
-default  | null
+@property footer
+@type String
+@default null
 
 
 #### outputDir
@@ -114,11 +110,9 @@ outputDir: 'assets'
 outputDir: 'assets/public'
 ```
 
-Property | Value
----------|--------
-name     | outputDir
-type     | String
-default  | 'assets'
+@property outputDir
+@type String
+@default 'assets'
 
 
 #### outputFileName
@@ -137,22 +131,19 @@ outputFileName: 'app'
 // Results in assets/app.css and assets/app.js being created
 ```
 
-Property | Value
----------|--------
-name     | outputFileName
-type     | String
-default  | 'app'
+@property outputFileName
+@type String
+@default 'app'
 
 
 #### wrapScriptsInFunction
 
 Whether or not to wrap the concatenated javascript in an eval statement.
 
-Property | Value
----------|--------
-name     | wrapScriptsinFunction
-type     | Boolean
-default  | true
+@property wrapScriptsInFunction
+@type Boolean
+@default true
+
 
 ## Issues
 

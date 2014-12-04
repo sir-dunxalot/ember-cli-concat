@@ -72,14 +72,14 @@ module.exports = {
   footer: null,
 
   /**
-  An override the developer can utilize to concatinate regardless of the environment. Useful for debuggin purpuses.
+  An override the developer can utilize to concatenate regardless of the environment. Useful for debuggin purpuses.
 
-  @property forceConcatination
+  @property forceConcatenation
   @type Boolean
   @default false
   */
 
-  forceConcatination: false,
+  forceConcatenation: false,
 
   /**
   The string to add to the start of all concatenated files. Usually this is a comment. For example:
@@ -215,18 +215,20 @@ module.exports = {
   */
 
   included: function(app) {
-    var options = defaultFor(app.options['ember-cli-concat'], {});
+    var options = defaultFor(app.options.emberCliConcat, {});
 
     this.app = app;
-
-    if (app.env.toString() !== 'development' || this.forceConcatination) {
-      shouldConcatFiles = true;
-    }
 
     /* Override default options with those defined by the developer */
 
     for (var option in options) {
       this[option] = options[option];
+    }
+
+    console.log(options);
+
+    if (app.env.toString() !== 'development' || this.forceConcatenation) {
+      shouldConcatFiles = true;
     }
   },
 
@@ -238,7 +240,7 @@ module.exports = {
 
   postprocessTree: function(type, tree) {
 
-    /* If we're not concatinating anything, just return the original tree */
+    /* If we're not concatenating anything, just return the original tree */
 
     if (!shouldConcatFiles) {
       return tree;
@@ -252,7 +254,7 @@ module.exports = {
     var outputPath = '/' + cleanPath(this.outputDir) + '/' + this.outputFileName;
     var paths = this.app.options.outputPaths;
 
-    /* Locate all script files and concatinate into one file. */
+    /* Locate all script files and concatenate into one file. */
 
     var scriptInputFiles = [cleanPath(paths.vendor['js']), cleanPath(paths.app['js'])];
     var concatenatedScripts = concat(tree, {
@@ -264,7 +266,7 @@ module.exports = {
       wrapInFunction: this.wrapScriptsInFunction
     });
 
-    /* Locate all style files and concatinate into one file */
+    /* Locate all style files and concatenate into one file */
 
     var styleInputFiles = [cleanPath(paths.vendor['css'])];
     var appCssPaths = paths.app['css'];

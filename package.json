@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-concat",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "directories": {
     "doc": "doc",
     "test": "tests"
@@ -36,7 +36,7 @@
     "express": "^4.8.5",
     "glob": "^4.0.5"
   },
-  "description": "Concatinate Ember CLI's multiple scripts and styles into single js and css files, respectively.",
+  "description": "Concatenate Ember CLI's multiple scripts and styles into single js and css files in production environments.",
   "keywords": [
     "ember-addon",
     "ember",
