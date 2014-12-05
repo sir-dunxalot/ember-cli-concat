@@ -63,6 +63,18 @@ var app = new EmberApp({
 });
 ```
 
+
+#### enabled
+
+Disables concatenation of files no matter what other options are set (e.g. `forceConcatination: true`). Useful for debugging purposes.
+
+Property | Value
+---------|--------
+name     | enabled
+type     | Boolean
+default  | true
+
+
 #### footer
 
 The string to add to the end of all concatenated files. Usually this is a comment. For example:
@@ -121,6 +133,25 @@ Property | Value
 name     | outputDir
 type     | String
 default  | 'assets'
+
+
+#### useSelfClosingTags
+
+Whether or not to use self closing HTML tags for the `<style>` and `<link>` tags to be compatible with certain (outdated :p) templating engines.
+
+For example, if you set `useSelfClosingTags` to `true`:
+
+```html
+<link href="assets/app.css">
+<!-- Becomes... -->
+<link href="assets/app.css" />
+```
+
+Property | Value
+---------|--------
+name     | useSelfClosingTags
+type     | Boolean
+default  | false
 
 
 #### outputFileName
