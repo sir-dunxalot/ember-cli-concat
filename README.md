@@ -9,6 +9,14 @@ In other words, in production builds `vendor.css` and `app-name.css` will become
 
 **By default, concatenation only takes place in production builds**
 
+## Contents
+
+- [Installation](#installation)
+- [Customizable options](#customizable-options)
+- [Asset fingerprinting](#asset-fingerprinting)
+- [Issues](#issues)
+- [Inspirational quotation](#inspirational-quotation)
+
 ## Installation
 
 Add the package:
@@ -197,6 +205,6 @@ default  | true
 
 Please open an issue or PR.
 
-## Inspirational Quote
+## Inspirational Quotation
 
 "Drink beer and party" - Steve Jobs
