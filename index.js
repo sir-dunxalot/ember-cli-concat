@@ -143,7 +143,25 @@ module.exports = {
   @default 'app'
   */
 
-  outputFileName: 'app', // CHANGE
+  outputFileName: 'app',
+
+  /**
+  Whether or not to use self closing HTML tags for the `<style>` and `<link>` tags to be compatible with certain (outdated :p) templating engines.
+
+  For example, if you set `useSelfClosingTags` to `true`:
+
+  ```html
+  <link href="assets/app.css">
+  <!-- Becomes... -->
+  <link href="assets/app.css" />
+  ```
+
+  @property useSelfClosingTags
+  @type Boolean
+  @default false
+  */
+
+  useSelfClosingTags: false,
 
   /**
   Whether or not to wrap the concatenated javascript in an eval statement.
@@ -172,10 +190,14 @@ module.exports = {
     /* Helper function to return string that willbe placed in the DOM */
 
     var asset = function(assetType, assetPath) {
+      var closing;
+
       if (assetType === 'script') {
         return '<script src="' + assetPath + '"></script>';
       } else {
-        return '<link rel="stylesheet" href="' + assetPath + '">';
+        closing = _this.useSelfClosingTags ? ' /' : null;
+
+        return '<link rel="stylesheet" href="' + assetPath + '"' + closing + '>';
       }
     }
 

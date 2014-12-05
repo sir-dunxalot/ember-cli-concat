@@ -47,6 +47,6 @@
   ],
   "ember-addon": {
     "configPath": "tests/dummy/config",
-    "before": "broccoli-asset-rev" // So asset fingerprinting works correctly
+    "before": "broccoli-asset-rev"
   }
 }
