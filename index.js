@@ -55,6 +55,16 @@ var cleanPath = function(path) {
 module.exports = {
   name: 'ember-cli-concat', // Don't wear it out
 
+  /**
+  Disables concatenation of files no matter what other options are set (e.g. `forceConcatination: true`). Useful for debugging purposes.
+
+  @property enabled
+  @type Boolean
+  @default true
+  */
+
+  enabled: true,
+
   /* Public properties (AKA the default options) */
 
   /**
@@ -133,7 +143,7 @@ module.exports = {
   @default 'app'
   */
 
-  outputFileName: 'app',
+  outputFileName: 'app', // CHANGE
 
   /**
   Whether or not to wrap the concatenated javascript in an eval statement.
@@ -216,6 +226,7 @@ module.exports = {
 
   included: function(app) {
     var options = defaultFor(app.options.emberCliConcat, {});
+    var inDevelopmentEnvironment = app.env.toString() === 'development';
 
     this.app = app;
 
@@ -225,9 +236,7 @@ module.exports = {
       this[option] = options[option];
     }
 
-    console.log(options);
-
-    if (app.env.toString() !== 'development' || this.forceConcatenation) {
+    if ((!inDevelopmentEnvironment || this.forceConcatenation) && this.enabled) {
       shouldConcatFiles = true;
     }
   },

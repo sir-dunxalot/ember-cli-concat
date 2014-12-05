@@ -3,7 +3,14 @@
 
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
-var app = new EmberAddon();
+var app = new EmberAddon({
+  fingerprint: {
+    enabled: true,
+  },
+  emberCliConcat: {
+    forceConcatenation: true,
+  }
+});
 
 // Use `app.import` to add additional libraries to the generated
 // output files.
