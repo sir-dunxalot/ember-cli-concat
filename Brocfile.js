@@ -8,8 +8,7 @@ var app = new EmberAddon({
     enabled: true,
   },
   emberCliConcat: {
-    forceConcatenation: true,
-    useSelfClosingTags: true
+    /* Add custom options here */
   }
 });
 
