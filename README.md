@@ -53,11 +53,13 @@ Several options are made available for you to customize the addon. They can be s
 ```js
 var app = new EmberApp({
   emberCliConcat: {
+    enabled: true,
     footer: null,
     forceConcatination: false,
     header: null,
     outputDir: 'assets',
     outputFileName: 'app',
+    useSelfClosingTags: false,
     wrapScriptsInFunction: true
   }
 });
@@ -187,6 +189,14 @@ name     | wrapScriptsInFunction
 type     | Boolean
 default  | true
 
+## Asset Fingerprinting
+
+`ember-cli-concat` is compatible with `broccoli-asset-rev` ([repo](https://github.com/rickharrison/broccoli-asset-rev)) out-of-the-box. If you require support for other 'link-changing' addons, please let me know.
+
 ## Issues
 
 Please open an issue or PR.
+
+## Inspirational Quote
+
+"Drink beer and party" - Steve Jobs
