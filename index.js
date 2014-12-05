@@ -195,7 +195,7 @@ module.exports = {
       if (assetType === 'script') {
         return '<script src="' + assetPath + '"></script>';
       } else {
-        closing = _this.useSelfClosingTags ? ' /' : null;
+        closing = _this.useSelfClosingTags ? ' /' : '';
 
         return '<link rel="stylesheet" href="' + assetPath + '"' + closing + '>';
       }
