@@ -10,6 +10,7 @@ var mergeTrees = require('broccoli-merge-trees');
 /* Private properties */
 
 var shouldConcatFiles = false;
+var testing = false;
 
 /* Helper Functions */
 
@@ -206,13 +207,17 @@ module.exports = {
     var addAssets = function(assetType) {
       var ext = assetType === 'script' ? 'js' : 'css';
       var appAssets = [];
-      var appPaths, vendorAssets;
+      var appPaths, testAssets, vendorAssets;
 
       if (shouldConcatFiles) {
         return asset(assetType, 'assets/' + _this.outputFileName + '.' + ext);
       } else {
         vendorAssets = asset(assetType, paths.vendor[ext]);
         appPaths = paths.app[ext];
+
+        /* If in test environment, define the required test-support assets */
+
+        testAssets = testing ? asset(assetType, paths.testSupport[ext]) : '';
 
         /* Allow for multiple stylesheets because the app tree's CSS uses a KVP relationship */
 
@@ -224,7 +229,7 @@ module.exports = {
           appAssets = asset(assetType, appPaths);
         }
 
-        return vendorAssets + appAssets;
+        return vendorAssets + testAssets + appAssets;
       }
     }
 
@@ -248,8 +253,11 @@ module.exports = {
 
   included: function(app) {
     var options = defaultFor(app.options.emberCliConcat, {});
-    var inDevelopmentEnvironment = app.env.toString() === 'development';
+    var environment = app.env.toString();
+    var inDevelopmentEnvironment = environment === 'development';
 
+    testing = environment === 'test';
+    this.environment = environment;
     this.app = app;
 
     /* Override default options with those defined by the developer */
@@ -287,7 +295,16 @@ module.exports = {
 
     /* Locate all script files and concatenate into one file. */
 
-    var scriptInputFiles = [cleanPath(paths.vendor['js']), cleanPath(paths.app['js'])];
+    var scriptInputFiles = [
+      cleanPath(paths.vendor['js'])
+    ];
+
+    if (testing) {
+      scriptInputFiles.push(cleanPath(paths.testSupport['js']));
+    }
+
+    scriptInputFiles.push(cleanPath(paths.app['js']));
+
     var concatenatedScripts = concat(tree, {
       allowNone: true,
       inputFiles: scriptInputFiles,
@@ -299,7 +316,16 @@ module.exports = {
 
     /* Locate all style files and concatenate into one file */
 
-    var styleInputFiles = [cleanPath(paths.vendor['css'])];
+    var styleInputFiles = [
+      cleanPath(paths.vendor['css'])
+    ];
+
+    console.log(paths.testSupport);
+
+    if (paths.testSupport) {
+      styleInputFiles.push(cleanPath(paths.testSupport['css']));
+    }
+
     var appCssPaths = paths.app['css'];
 
     /* The app tree's CSS uses a KVP relationship so we have to do a little more work than we did for the scripts... */

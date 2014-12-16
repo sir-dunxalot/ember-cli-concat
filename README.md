@@ -14,6 +14,7 @@ In other words, in production builds `vendor.css` and `app-name.css` will become
 - [Installation](#installation)
 - [Customizable options](#customizable-options)
 - [Asset fingerprinting](#asset-fingerprinting)
+- [Using with Ember Testing](#testing)
 - [Issues](#issues)
 - [Inspirational quotation](#inspirational-quotation)
 
@@ -51,8 +52,9 @@ And remove the main `<script>` and `<link rel="stylesheet">` tags from your app'
     <!-- <script src="assets/app-name.js"> -->
   </body>
 </html>
-
 ```
+
+*Please note: usage with Ember Testing requires you to change your `tests.dummy/app/index.html` file. See the section on [using with Ember Testing](#using-with-ember-testing) for more details.*
 
 ## Customizable Options
 
@@ -200,6 +202,48 @@ default  | true
 ## Asset Fingerprinting
 
 `ember-cli-concat` is compatible with `broccoli-asset-rev` ([repo](https://github.com/rickharrison/broccoli-asset-rev)) out-of-the-box. If you require support for other 'link-changing' addons, please let me know.
+
+## Using With Ember Testing
+
+Ember CLI uses a dummy app to run your tests against. This app has its own `index.html` file and, therefore, you must change it as you changed your main `index.html` file previously.
+
+Remove your `vendor`, `bar`, and `test-support` tags as below. This addon will write them for you on-the-fly.
+
+```
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bar Tests</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {{content-for 'head'}}
+    {{content-for 'test-head'}}
+
+    <!-- Removed stylesheets -->
+    <!-- <link rel="stylesheet" href="assets/vendor.css"> -->
+    <!-- <link rel="stylesheet" href="assets/bar.css"> -->
+    <!-- <link rel="stylesheet" href="assets/test-support.css"> -->
+    <style>
+      // Ember Testing inline styling here
+    </style>
+  </head>
+  <body>
+
+    {{content-for 'body'}}
+    {{content-for 'test-body'}}
+
+    <!-- Removed scripts -->
+    <!-- <script src="assets/vendor.js"></script> -->
+    <!-- <script src="assets/test-support.js"></script> -->
+    <!-- <script src="assets/bar.js"></script> -->
+    <script src="testem.js"></script>
+    <script src="assets/test-loader.js"></script>
+  </body>
+</html>
+```
 
 ## Issues
 
