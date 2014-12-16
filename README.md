@@ -14,7 +14,7 @@ In other words, in production builds `vendor.css` and `app-name.css` will become
 - [Installation](#installation)
 - [Customizable options](#customizable-options)
 - [Asset fingerprinting](#asset-fingerprinting)
-- [Using with Ember Testing](#testing)
+- [Using with Ember Testing](#using-with-ember-testing)
 - [Issues](#issues)
 - [Inspirational quotation](#inspirational-quotation)
 
@@ -205,11 +205,11 @@ default  | true
 
 ## Using With Ember Testing
 
-Ember CLI uses a dummy app to run your tests against. This app has its own `index.html` file and, therefore, you must change it as you changed your main `index.html` file previously.
+Ember CLI uses a dummy app to run your tests against. This app has its own `index.html` file and, therefore, you must change it like you changed your main `index.html` file previously.
 
-Remove your `vendor`, `bar`, and `test-support` tags as below. This addon will write them for you on-the-fly.
+Remove your `vendor`, `bar`, and `test-support` tags as below. Don't worry - this addon will write them for you on-the-fly.
 
-```
+```html
 <!DOCTYPE html>
 <html>
   <head>
