@@ -320,8 +320,6 @@ module.exports = {
       cleanPath(paths.vendor['css'])
     ];
 
-    console.log(paths.testSupport);
-
     if (paths.testSupport) {
       styleInputFiles.push(cleanPath(paths.testSupport['css']));
     }
