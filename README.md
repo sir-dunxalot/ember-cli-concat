@@ -1,4 +1,4 @@
-Ember-cli-concat [![Ember Addon](//emberadons.com)](https://s3.amazonaws.com/images.jebbit.com/ember/badge.svg)
+Ember-cli-concat [![Ember Addon](https://s3.amazonaws.com/images.jebbit.com/ember/badge.svg)](//emberaddons.com)
 ======
 
 `ember-cli-concat` is an Ember CLI addon that:
