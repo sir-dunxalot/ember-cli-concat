@@ -41,7 +41,6 @@ Documentation including installation, usage, and customizable options is availab
 
 - Test suite
 - Asset map support (especially in test environment)
-- Documentation moved to wiki
 
 
 ## Issues
