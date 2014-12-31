@@ -6,7 +6,6 @@
 var concat = require('broccoli-concat');
 var fileRemover = require('broccoli-file-remover');
 var mergeTrees = require('broccoli-merge-trees');
-var semver = require('semver');
 
 /* Private properties */
 
