@@ -1,4 +1,5 @@
-# Ember-cli-concat
+Ember-cli-concat [![Ember Addon](//emberadons.com)](https://s3.amazonaws.com/images.jebbit.com/ember/badge.svg)
+======
 
 `ember-cli-concat` is an Ember CLI addon that:
 - Concatenates your javascript files into a single js file for production
@@ -54,13 +55,26 @@ And remove the main `<script>` and `<link rel="stylesheet">` tags from your app'
 </html>
 ```
 
+If you're using an Ember CLI version less than 1.4.0 you will also need to customize the contentFor options as stated [in the documentation](#scriptscontentfor):
+
+```js
+// Brocfile.js
+var app = new EmberApp({
+  emberCliConcat: {
+    scriptsContentFor: 'body',
+    stylesContentFor: 'head',
+  }
+});
+```
+
 *Please note: usage with Ember Testing requires you to change your `tests.dummy/app/index.html` file. See the section on [using with Ember Testing](#using-with-ember-testing) for more details.*
 
 ## Customizable Options
 
-Several options are made available for you to customize the addon. They can be set in your app's Brocfile as follows:
+Several options are made available for you to customize the addon. They can be set in your app's Brocfile as follows (default options shown below):
 
 ```js
+// Brocfile.js
 var app = new EmberApp({
   emberCliConcat: {
     enabled: true,
@@ -69,12 +83,13 @@ var app = new EmberApp({
     header: null,
     outputDir: 'assets',
     outputFileName: 'app',
+    scriptsContentFor: 'body-footer',
+    stylesContentFor: 'head-footer',
     useSelfClosingTags: false,
     wrapScriptsInFunction: true
   }
 });
 ```
-
 
 #### enabled
 
@@ -147,25 +162,6 @@ type     | String
 default  | 'assets'
 
 
-#### useSelfClosingTags
-
-Whether or not to use self closing HTML tags for the `<style>` and `<link>` tags to be compatible with certain (outdated :p) templating engines.
-
-For example, if you set `useSelfClosingTags` to `true`:
-
-```html
-<link href="assets/app.css">
-<!-- Becomes... -->
-<link href="assets/app.css" />
-```
-
-Property | Value
----------|--------
-name     | useSelfClosingTags
-type     | Boolean
-default  | false
-
-
 #### outputFileName
 
 The name of the concatenated file that will hold the styles or script for your project. Define it as a string with no file extention. This addon will automatically append the require file extentions. For example:
@@ -187,6 +183,69 @@ Property | Value
 name     | outputFileName
 type     | String
 default  | 'app'
+
+
+#### scriptsContentFor
+
+The name of the Ember CLI content-for hook to use to add scripts to your app. The content-for hooks are generally found in index.html files.
+
+If you're using an Ember CLI version **below** 1.4.0 you should set this value to `body`:
+
+```js
+// Ember CLI less than v1.4.0
+var app = new EmberApp({
+  emberCliConcat: {
+    scriptsContentFor: 'body'
+  }
+});
+```
+
+Property | Value
+---------|--------
+name     | scriptsContentFor
+type     | String
+default  | 'body-footer'
+
+
+#### stylesContentFor
+
+The name of the Ember CLI content-for hook to use to add styles to your app. The content-for hooks are generally found in index.html files.
+
+If you're using an Ember CLI version **below** 1.4.0 you should set this value to `head`:
+
+```js
+// Ember CLI less than v1.4.0
+var app = new EmberApp({
+  emberCliConcat: {
+    stylesContentFor: 'head'
+  }
+});
+```
+
+Property | Value
+---------|--------
+name     | stylesContentFor
+type     | String
+default  | 'head-footer'
+
+
+#### useSelfClosingTags
+
+Whether or not to use self closing HTML tags for the `<style>` and `<link>` tags to be compatible with certain (outdated :p) templating engines.
+
+For example, if you set `useSelfClosingTags` to `true`:
+
+```html
+<link href="assets/app.css">
+<!-- Becomes... -->
+<link href="assets/app.css" />
+```
+
+Property | Value
+---------|--------
+name     | useSelfClosingTags
+type     | Boolean
+default  | false
 
 
 #### wrapScriptsInFunction

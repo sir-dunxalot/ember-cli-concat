@@ -6,6 +6,7 @@
 var concat = require('broccoli-concat');
 var fileRemover = require('broccoli-file-remover');
 var mergeTrees = require('broccoli-merge-trees');
+var semver = require('semver');
 
 /* Private properties */
 
@@ -147,6 +148,48 @@ module.exports = {
   outputFileName: 'app',
 
   /**
+  The name of the Ember CLI content-for hook to use to add scripts to your app. The content-for hooks are generally found in index.html files.
+
+  If you're using an Ember CLI version **below** 1.4.0 you should set this value to `body`:
+
+  ```js
+  // Ember CLI less than v1.4.0
+  var app = new EmberApp({
+    emberCliConcat: {
+      scriptsContentFor: 'body'
+    }
+  });
+  ```
+
+  @property scriptsContentFor
+  @type String
+  @default 'body-footer'
+  */
+
+  scriptsContentFor: 'body-footer',
+
+  /**
+  The name of the Ember CLI content-for hook to use to add styles to your app. The content-for hooks are generally found in index.html files.
+
+  If you're using an Ember CLI version **below** 1.4.0 you should set this value to `head`:
+
+  ```js
+  // Ember CLI less than v1.4.0
+  var app = new EmberApp({
+    emberCliConcat: {
+      stylesContentFor: 'head'
+    }
+  });
+  ```
+
+  @property stylesContentFor
+  @type String
+  @default 'head-footer'
+  */
+
+  stylesContentFor: 'head-footer',
+
+  /**
   Whether or not to use self closing HTML tags for the `<style>` and `<link>` tags to be compatible with certain (outdated :p) templating engines.
 
   For example, if you set `useSelfClosingTags` to `true`:
@@ -185,8 +228,7 @@ module.exports = {
 
   contentFor: function(type) {
     var _this = this;
-    var app = _this.app;
-    var paths = app.options.outputPaths;
+    var paths = _this.app.options.outputPaths;
 
     /* Helper function to return string that willbe placed in the DOM */
 
@@ -235,9 +277,9 @@ module.exports = {
 
     /* Add scripts and stylesheets to the app's main HTML file */
 
-    if (type === 'head') {
+    if (type === _this.stylesContentFor) {
       return addAssets('style');
-    } else if (type === 'body') {
+    } else if (type === _this.scriptsContentFor) {
       return addAssets('script');
     }
   },
@@ -252,9 +294,9 @@ module.exports = {
   */
 
   included: function(app) {
-    var options = defaultFor(app.options.emberCliConcat, {});
     var environment = app.env.toString();
     var inDevelopmentEnvironment = environment === 'development';
+    var options = defaultFor(app.options.emberCliConcat, {});
 
     testing = environment === 'test';
     this.environment = environment;

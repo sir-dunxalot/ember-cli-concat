@@ -8,7 +8,7 @@ var app = new EmberAddon({
     enabled: true,
   },
   emberCliConcat: {
-    enabled: false
+    // enabled: false
     /* Add custom options here */
   }
 });
