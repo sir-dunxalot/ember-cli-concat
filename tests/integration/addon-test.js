@@ -37,17 +37,19 @@ test('Assets added to index.html file', function() {
       checkTagExists('vendor.css');
       checkTagExists('dummy.js');
       checkTagExists('vendor.js');
+
+      if (App.testing) {
+        checkTagExists('test-support.css');
+        checkTagExists('test-support.js');
+      }
     } else if (env === 'production') {
 
       /* TODO - Currently can't run tests in production environment */
 
       checkTagExists('app.css');
       checkTagExists('app.js');
-    }
-
-    if (App.testing) {
-      checkTagExists('test-support.css');
-      checkTagExists('test-support.js');
+    } else {
+      expect(0);
     }
 
   });

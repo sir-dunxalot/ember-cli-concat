@@ -9,9 +9,7 @@ var app = new EmberAddon({
     enabled: true,
   },
   emberCliConcat: {
-    // enabled: false
-    // forceConcatenation: true
-    /* Add custom options here */
+    /* Test custom options here */
   }
 });
 
