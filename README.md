@@ -1,4 +1,4 @@
-Ember-cli-concat [![Ember Addon](https://s3.amazonaws.com/images.jebbit.com/ember/badge.svg)](//emberaddons.com)
+Ember-cli-concat [![Build Status](https://travis-ci.org/sir-dunxalot/ember-cli-concat.svg?branch=develop)](https://travis-ci.org/sir-dunxalot/ember-cli-concat) [![Ember Addon](https://s3.amazonaws.com/images.jebbit.com/ember/badge.svg)](//emberaddons.com)
 ======
 
 Ember CLI Concat is an Ember addon that concatinates Ember CLI's app and vendor files into a single JS file and a single CSS file in production environments. In other words, less HTTP requests and a faster page load speed!
