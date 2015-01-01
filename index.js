@@ -3,7 +3,7 @@
 
 /* Dependencies */
 
-var concat = require('broccoli-concat');
+var concat = require('broccoli-sourcemap-concat');
 var fileRemover = require('broccoli-file-remover');
 var mergeTrees = require('broccoli-merge-trees');
 
@@ -149,23 +149,12 @@ module.exports = {
   /**
   The name of the Ember CLI content-for hook to use to add scripts to your app. The content-for hooks are generally found in index.html files.
 
-  If you're using an Ember CLI version **below** 1.4.0 you should set this value to `body`:
-
-  ```js
-  // Ember CLI less than v1.4.0
-  var app = new EmberApp({
-    emberCliConcat: {
-      scriptsContentFor: 'body'
-    }
-  });
-  ```
-
   @property scriptsContentFor
   @type String
-  @default 'body-footer'
+  @default 'body'
   */
 
-  scriptsContentFor: 'body-footer',
+  scriptsContentFor: 'body',
 
   /**
   The name of the Ember CLI content-for hook to use to add styles to your app. The content-for hooks are generally found in index.html files.
@@ -280,11 +269,13 @@ module.exports = {
       return addAssets('style');
     } else if (type === _this.scriptsContentFor) {
       return addAssets('script');
+    } else if (type ==='test-head') {
+      testing = true; // test-head is earliest test {{content-for}}
     }
   },
 
   /**
-  Overrides this addon's default options with any specified by the developer and determines whether or not to concatenate files based on the environment.
+  Overrides this addon's default options with any specified by the developer and determines whether or not to concatenate files based on the environment. Please note, there is a fallback check for detecting test environments in the contentFor hook.
 
   The included hook is run once during the build process of the addon.
 
@@ -297,7 +288,7 @@ module.exports = {
     var inDevelopmentEnvironment = environment === 'development';
     var options = defaultFor(app.options.emberCliConcat, {});
 
-    testing = environment === 'test';
+    testing = environment === 'test'; // Fallback in contentFor
     this.environment = environment;
     this.app = app;
 
@@ -361,7 +352,7 @@ module.exports = {
       cleanPath(paths.vendor['css'])
     ];
 
-    if (paths.testSupport) {
+    if (testing) {
       styleInputFiles.push(cleanPath(paths.testSupport['css']));
     }
 

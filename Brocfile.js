@@ -4,11 +4,13 @@
 var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
 
 var app = new EmberAddon({
+  storeConfigInMeta: false,
   fingerprint: {
     enabled: true,
   },
   emberCliConcat: {
     // enabled: false
+    // forceConcatenation: true
     /* Add custom options here */
   }
 });

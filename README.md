@@ -9,6 +9,7 @@ By default:
   - `vendor.js` and `app-name.js` will become `app.js`
 - In all environments:
   - Only the relevant `<script>` and `<link rel="stylesheet">` will be added to your index.html file so you don't have to worry about requesting assets that don't exist
+  - Source maps will be produced
 
 **By default, concatenation only takes place in production builds**
 

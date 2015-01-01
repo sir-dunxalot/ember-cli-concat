@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-concat",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": " An Ember addon that concatinates Ember CLI's app and vendor files into a single JS file and a single CSS file in production environments",
   "directories": {
     "doc": "doc",
@@ -21,9 +21,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "broccoli-concat": "0.0.12",
     "broccoli-file-remover": "^0.3.1",
-    "broccoli-merge-trees": "^0.2.1"
+    "broccoli-merge-trees": "^0.2.1",
+    "broccoli-sourcemap-concat": "^0.4.1"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.0",
