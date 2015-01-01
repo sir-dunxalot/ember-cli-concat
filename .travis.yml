@@ -3,6 +3,9 @@ language: node_js
 
 sudo: false
 
+git:
+  submodules: false
+
 cache:
   directories:
     - node_modules

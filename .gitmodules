@@ -1,0 +1,3 @@
+[submodule "docs"]
+	path = docs
+	url = git@github.com:sir-dunxalot/ember-cli-concat.wiki.git
