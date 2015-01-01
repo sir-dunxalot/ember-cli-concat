@@ -40,8 +40,7 @@ Documentation including installation, usage, and customizable options is availab
 
 ## Features in the Works
 
-- Test suite
-- Asset map support (especially in test environment)
+- Better test suite
 
 
 ## Issues
