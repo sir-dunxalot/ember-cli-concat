@@ -331,8 +331,12 @@ module.exports = {
       cleanPath(paths.vendor['js'])
     ];
 
+
     if (testing) {
-      scriptInputFiles.push(cleanPath(paths.testSupport['js']));
+      var testScriptPaths = paths.testSupport['js'];
+      for (var scriptPath in testScriptPaths) {
+        scriptInputFiles.push(cleanPath(testScriptPaths[scriptPath]));
+      }
     }
 
     scriptInputFiles.push(cleanPath(paths.app['js']));
