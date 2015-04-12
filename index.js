@@ -91,11 +91,11 @@ module.exports = {
   },
 
   filterPaths: function(ext) {
-    var tags = [];
+    var tags = ['placeholder'];
     var outputPaths = this._outputPaths;
 
-    /* Insert at the second place in array so test support
-    is before vendor */
+    /* Build array in reverse order so each tag is
+    in the correct order */
 
     var addTag = function(path) {
       if (path.indexOf('test-support') > -1 && !this._inTesting) {
@@ -118,6 +118,8 @@ module.exports = {
         }
       }
     }
+
+    tags.shift(); // Remove placeholder
 
     return tags;
   },
