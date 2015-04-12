@@ -313,7 +313,10 @@ module.exports = {
 
     /* If we're not concatenating anything, just return the original tree */
 
-    if (!shouldConcatFiles) {
+    /* also ignore request for just css tree
+     * waiting on: https://github.com/ember-cli/ember-cli/issues/3628
+     */
+    if (!shouldConcatFiles || type === 'css') {
       return tree;
     }
 
