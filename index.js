@@ -3,7 +3,7 @@
 
 /* Dependencies */
 
-var concat = require('broccoli-sourcemap-concat');
+var concatAndMap = require('broccoli-sourcemap-concat');
 var fileRemover = require('broccoli-file-remover');
 var mergeTrees = require('broccoli-merge-trees');
 var Funnel = require('broccoli-funnel');
@@ -260,6 +260,12 @@ module.exports = {
     }
   },
 
+  filterAndCleanPaths: function(ext) {
+    return this.filterPaths(ext).map(function(path) {
+      return this.getAssetTag(ext, path);
+    }.bind(this));
+  },
+
   filterPaths: function(ext) {
     var tags = [];
     var outputPaths = this._outputPaths;
@@ -338,7 +344,7 @@ module.exports = {
     var concatInProduction = this.inProduction && !this.preserveOriginals;
     var canRemoveOriginals = !this.preserveOriginals || concatInProduction;
     var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
-    var concatenatedScripts, concatenatedStyles, outputPath, removeFromTree, scriptInputFiles, styleInputFiles, trees, workingTree;
+    var concatenatedScripts, concatenatedStyles, outputPath, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 
     removeFromTree = function(inputFiles) {
       workingTree = fileRemover(workingTree, {
@@ -352,14 +358,16 @@ module.exports = {
       return tree;
     }
 
-    /* Locate all script files and concatenate into one file. */
+    /* Locate all script files and concatenate into one file */
 
     if (this.scriptsContentFor) {
-      scriptInputFiles = filterPaths('js');
+      scriptInputPaths = this.filterAndCleanPaths('js');
 
-      concatenatedScripts = concat(tree, {
+      console.log(scriptInputPaths);
+
+      concatenatedScripts = concatAndMap(tree, {
         allowNone: true,
-        inputFiles: scriptInputFiles,
+        inputFiles: scriptInputPaths,
         outputFile: outputPath + '.js',
         footer: this.footer,
         header: this.header,
@@ -370,13 +378,13 @@ module.exports = {
     /* Locate all style files and concatenate into one file */
 
     if (this.stylesContentFor) {
-      styleInputFiles = filterPaths('css');
+      styleInputPaths = this.filterAndCleanPaths('css');
 
-      concatenatedStyles = concat(tree, {
+      concatenatedStyles = concatAndMap(tree, {
         allowNone: true,
         footer: this.footer,
         header: this.header,
-        inputFiles: styleInputFiles,
+        inputFiles: styleInputPaths,
         outputFile: outputPath + '.css',
         wrapInFunction: false
       });
@@ -389,19 +397,17 @@ module.exports = {
     /* Remove empty values and add the remaining to the
     working tree */
 
-    workingTree = mergeTrees(
-      files.filter(function(e) { return e; })
-    );
+    workingTree = mergeTrees(trees);
 
     /* Remove the unnecessary script and style files */
 
     if (canRemoveOriginals) {
       if (concatenatedScripts) {
-        removeFromTree(scriptInputFiles);
+        removeFromTree(scriptInputPaths);
       }
 
       if (concatenatedStyles) {
-        removeFromTree(styleInputFiles);
+        removeFromTree(styleInputPaths);
       }
     }
 
