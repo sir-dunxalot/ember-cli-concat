@@ -205,6 +205,15 @@ module.exports = {
 
   wrapScriptsInFunction: true,
 
+ /**
+  Whether or not to original files regardless of concatenation.
+
+  @property preserveOriginals
+  @type Boolean
+  @default true
+  */
+
+  preserveOriginals: false,
   /**
   Append `<link>` and `<script>` tags to the app's HTML file to load only the assets we require.
 
@@ -378,10 +387,11 @@ module.exports = {
     var workingTree = mergeTrees([tree, concatenatedScripts, concatenatedStyles]);
 
     /* Remove the unnecessary files */
-
-    workingTree = fileRemover(workingTree, {
-      files: scriptInputFiles.concat(styleInputFiles)
-    });
+    if (!this.preserveOriginals) {
+      workingTree = fileRemover(workingTree, {
+        files: scriptInputFiles.concat(styleInputFiles)
+      });
+    }
 
     return workingTree;
   }
