@@ -16,6 +16,7 @@ Example usage:
 ```
 var path = defaultFor(path, 'assets/app.js');
 ```
+
 @method defaultFor
 @param {all} The variable you want to use the value of but need a fallback
 @param {all} The default value to use in cases where the value of `variable` is not defined
@@ -39,6 +40,7 @@ module.exports = {
   ```
   string: '// Copyright © I Am Devloper 2014'
   ```
+
   @property footer
   @type String
   @default null
@@ -48,6 +50,7 @@ module.exports = {
 
   /**
   An override the developer can utilize to concatenate regardless of the environment. Useful for debuggin purpuses.
+
   @property forceConcatenation
   @type Boolean
   @default false
@@ -60,6 +63,7 @@ module.exports = {
   ```
   string: '// Author: I Am Devloper'
   ```
+
   @property header
   @type String
   @default null
@@ -69,6 +73,7 @@ module.exports = {
 
   /**
   Disables concatenation of files no matter what other options are set (e.g. `forceConcatination: true`). Useful for debugging purposes.
+
   @property enabled
   @type Boolean
   @default true
@@ -78,6 +83,7 @@ module.exports = {
 
   /**
   The name of the Ember CLI content-for hook to use to add scripts to your app. The content-for hooks are generally found in index.html files.
+
   @property scriptsContentFor
   @type String
   @default 'body'
@@ -96,6 +102,7 @@ module.exports = {
     }
   });
   ```
+
   @property stylesContentFor
   @type String
   @default 'head-footer'
@@ -112,6 +119,7 @@ module.exports = {
   // or
   outputDir: 'assets/public'
   ```
+
   @property outputDir
   @type String
   @default 'assets'
@@ -130,6 +138,7 @@ module.exports = {
   outputFileName: 'app'
   // Results in assets/app.css and assets/app.js being created
   ```
+
   @property outputFileName
   @type String
   @default 'app'
@@ -145,6 +154,7 @@ module.exports = {
   <!-- Becomes... -->
   <link href="assets/app.css" />
   ```
+
   @property useSelfClosingTags
   @type Boolean
   @default false
@@ -154,6 +164,7 @@ module.exports = {
 
   /**
   Whether or not to wrap the concatenated javascript in an eval statement.
+
   @property wrapScriptsinFunction
   @type Boolean
   @default true
@@ -181,6 +192,7 @@ module.exports = {
   ```
   return cleanPath('/assets/app.js') // 'assets/app.js'
   ```
+
   @method cleanPath
   @param {String} The path to clean up
   */
@@ -317,7 +329,8 @@ module.exports = {
 
     /*
     If we are concatenating files, let's get busy...
-    Note: to actually 'save' the concatenated files we have to manually merge the trees after the concat.
+    Note: to actually 'save' the concatenated files we have to
+    manually merge the trees after the concat.
     */
 
     var outputPath = '/' + cleanPath(this.outputDir) + '/' + this.outputFileName;
@@ -356,7 +369,8 @@ module.exports = {
 
     var appCssPaths = paths.app['css'];
 
-    /* The app tree's CSS uses a KVP relationship so we have to do a little more work than we did for the scripts... */
+    /* The app tree's CSS uses a KVP relationship so we have
+    to do a little more work than we did for the scripts... */
 
     for (var path in appCssPaths) {
       styleInputFiles.push(cleanPath(appCssPaths[path]));

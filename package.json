@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-concat",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "description": " An Ember addon that concatinates Ember CLI's app and vendor files into a single JS file and a single CSS file in production environments",
   "directories": {
     "doc": "doc",
