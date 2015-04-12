@@ -185,6 +185,8 @@ module.exports = {
   _concatScripts: false,
   _concatStyles: false,
   _environment: null,
+  _inTesting: false,
+  _inProduction: false,
   _outputPaths: null,
   _shouldConcatFiles: false,
 
@@ -311,17 +313,17 @@ module.exports = {
   included: function(app) {
     var environment = app.env.toString();
     var options = defaultFor(app.options.emberCliConcat, {});
-    var development = environment === 'development';
 
     this._includeTestAssets = app.tests;
     this._environment = environment;
+    this._inProduction = environment === 'production';
     this._outputPaths = app.options.outputPaths;
 
     for (var option in options) {
       this[option] = options[option];
     }
 
-    if ((!development || this.forceConcatenation) && this.enabled) {
+    if ((this._inProduction || this.forceConcatenation) && this.enabled) {
       this._shouldConcatFiles = true;
     }
   },
@@ -333,8 +335,7 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
-    var inProduction = this._environment === 'production';
-    var concatInProduction = inProduction && !this.preserveOriginals;
+    var concatInProduction = this.inProduction && !this.preserveOriginals;
     var canRemoveOriginals = !this.preserveOriginals || concatInProduction;
     var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
     var concatenatedScripts, concatenatedStyles, outputPath, removeFromTree, scriptInputFiles, styleInputFiles, trees, workingTree;
