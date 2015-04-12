@@ -187,7 +187,7 @@ module.exports = {
   _environment: null,
   _outputPaths: null,
   _shouldConcatFiles: false,
-  _inTesting: false,
+  _needTestingTag: false,
 
   /**
   Cleans up a path by removing the opening and closing forward slashes. Essentially, this turns an absolute path into a relative path and protects against typos in the developer-defined options.
@@ -228,13 +228,15 @@ module.exports = {
     var concatPath = this.outputDir + '/' + this.outputFileName;
     var ext, tags;
 
-    if (contentForType === this.scriptsContentFor) {
+    if (contentForType === 'test-head') {
+      this._needTestingTag = true;
+    } else if (contentForType === this.scriptsContentFor) {
       ext = 'js';
 
       this._concatScripts = true;
 
       if (this._shouldConcatFiles) {
-        tags = getAssetTag(ext, concatPath + '.' + ext);
+        tags = this.getAssetTag(ext, concatPath + '.' + ext);
       } else {
         tags = this.getTags(ext);
       }
@@ -246,7 +248,7 @@ module.exports = {
       this._concatStyles = true;
 
       if (this._shouldConcatFiles) {
-        tags = getAssetTag(ext, concatPath + '.' + ext);
+        tags = this.getAssetTag(ext, concatPath + '.' + ext);
       } else {
         tags = this.getTags(ext);
       }
@@ -258,17 +260,21 @@ module.exports = {
   },
 
   filterPaths: function(ext) {
-    var tags = ['placeholder'];
+    var tags = [];
     var outputPaths = this._outputPaths;
+    var addPath;
 
-    /* Build array in reverse order so each tag is
+    /* Build array in custom order so each tag is
     in the correct order */
 
-    var addPath = function(path) {
-      if (path.indexOf('test-support') > -1 && !this._inTesting) {
+    addPath = function(path) {
+      var isTestSupportAsset = path.indexOf('test-support') > -1;
+      var i = isTestSupportAsset ? 1 : 0;
+
+      if (isTestSupportAsset && !this._inTesting) {
         return;
       } else if (path.indexOf('test-loader') === -1) {
-        tags.splice(1, 0, path);
+        tags.splice(i, 0, path);
       }
     }.bind(this);
 
@@ -286,13 +292,18 @@ module.exports = {
       }
     }
 
-    tags.shift(); // Remove placeholder
-
     return tags;
   },
 
   getTags: function(ext) {
-    return this.filterPaths(ext).map(function(path) {
+    var includeTestingTag = this._needTestingTag;
+    var paths = this.filterPaths(ext).filter(function(path) {
+      return !(path.indexOf('test') > -1 && !includeTestingTag);
+    });
+
+    console.log(paths);
+
+    return paths.map(function(path) {
       return this.getAssetTag(ext, path);
     }.bind(this));
   },
@@ -310,7 +321,7 @@ module.exports = {
     var options = defaultFor(app.options.emberCliConcat, {});
     var development = environment === 'development';
 
-    this._inTesting = app.tests;
+    this._includeTestAssets = app.tests;
     this._environment = environment;
     this._outputPaths = app.options.outputPaths;
 
