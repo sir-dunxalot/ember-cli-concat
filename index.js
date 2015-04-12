@@ -187,7 +187,6 @@ module.exports = {
   _environment: null,
   _outputPaths: null,
   _shouldConcatFiles: false,
-  _needTestingTag: false,
 
   /**
   Cleans up a path by removing the opening and closing forward slashes. Essentially, this turns an absolute path into a relative path and protects against typos in the developer-defined options.
@@ -228,8 +227,8 @@ module.exports = {
     var concatPath = this.outputDir + '/' + this.outputFileName;
     var ext, tags;
 
-    if (contentForType === 'test-head') {
-      this._needTestingTag = true;
+    if (contentForType === 'test-support-prefix') {
+      this._inTesting = true;
     } else if (contentForType === this.scriptsContentFor) {
       ext = 'js';
 
@@ -296,14 +295,7 @@ module.exports = {
   },
 
   getTags: function(ext) {
-    var includeTestingTag = this._needTestingTag;
-    var paths = this.filterPaths(ext).filter(function(path) {
-      return !(path.indexOf('test') > -1 && !includeTestingTag);
-    });
-
-    console.log(paths);
-
-    return paths.map(function(path) {
+    return this.filterPaths(ext).map(function(path) {
       return this.getAssetTag(ext, path);
     }.bind(this));
   },
