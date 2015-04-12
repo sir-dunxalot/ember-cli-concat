@@ -243,16 +243,18 @@ module.exports = {
   },
 
   filterAndCleanPaths: function(ext) {
-    return this.filterPaths(ext).map(function(path) {
-      return this.getAssetTag(ext, path);
+    return this.filterPaths(ext, true).map(function(path) {
+      return this.cleanPath(path);
     }.bind(this));
   },
 
-  filterPaths: function(ext) {
+  filterPaths: function(ext, requireOriginals) {
     var assertion = ext === 'js' ? 'concatScripts' : 'concatStyles';
     var tags = [];
     var outputPaths = this._outputPaths;
     var addPath, concatPath;
+
+    requireOriginals = defaultFor(requireOriginals, false);
 
     /* Build array in custom order so each tag is
     in the correct order */
@@ -268,11 +270,11 @@ module.exports = {
       }
     }.bind(this);
 
-    if (this[assertion]) {
+    if (this[assertion] && !requireOriginals) {
       concatPath = this.outputDir + '/' + this.outputFileName;
 
       addPath(concatPath + '.' + ext);
-    } else  {
+    } else {
       for (var treeName in outputPaths) {
         var assets = outputPaths[treeName];
         var paths = assets[ext];
