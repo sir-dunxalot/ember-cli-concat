@@ -35,6 +35,9 @@ var defaultFor = function(variable, defaultValue) {
 module.exports = {
   name: 'ember-cli-concat',
 
+  concatScripts: false,
+  concatStyles: true,
+
   /**
   The string to add to the end of all concatenated files. Usually this is a comment. For example:
   ```
@@ -182,8 +185,6 @@ module.exports = {
 
   preserveOriginals: false,
 
-  _concatScripts: false,
-  _concatStyles: false,
   _environment: null,
   _inTesting: false,
   _inProduction: false,
@@ -226,35 +227,16 @@ module.exports = {
 
   contentFor: function(contentForType) {
     var outputPaths = this._outputPaths;
-    var concatPath = this.outputDir + '/' + this.outputFileName;
+    var scriptsContentFor = this.scriptsContentFor;
+    var stylesContentFor = this.stylesContentFor;
     var ext, tags;
 
     if (contentForType === 'test-support-prefix') {
       this._inTesting = true;
     } else if (contentForType === this.scriptsContentFor) {
-      ext = 'js';
-
-      this._concatScripts = true;
-
-      if (this._shouldConcatFiles) {
-        tags = this.getAssetTag(ext, concatPath + '.' + ext);
-      } else {
-        tags = this.getTags(ext);
-      }
-
-      return tags;
+      return this.getTags('js');
     } else if (contentForType === this.stylesContentFor) {
-      ext = 'css';
-
-      this._concatStyles = true;
-
-      if (this._shouldConcatFiles) {
-        tags = this.getAssetTag(ext, concatPath + '.' + ext);
-      } else {
-        tags = this.getTags(ext);
-      }
-
-      return tags;
+      return this.getTags('css');
     } else {
       return;
     }
@@ -267,9 +249,10 @@ module.exports = {
   },
 
   filterPaths: function(ext) {
+    var assertion = ext === 'js' ? 'concatScripts' : 'concatStyles';
     var tags = [];
     var outputPaths = this._outputPaths;
-    var addPath;
+    var addPath, concatPath;
 
     /* Build array in custom order so each tag is
     in the correct order */
@@ -285,16 +268,22 @@ module.exports = {
       }
     }.bind(this);
 
-    for (var treeName in outputPaths) {
-      var assets = outputPaths[treeName];
-      var paths = assets[ext];
-      var path;
+    if (this[assertion]) {
+      concatPath = this.outputDir + '/' + this.outputFileName;
 
-      if (typeof paths === 'string') {
-        addPath(paths);
-      } else {
-        for (var type in paths) {
-          addPath(paths[type]);
+      addPath(concatPath + '.' + ext);
+    } else  {
+      for (var treeName in outputPaths) {
+        var assets = outputPaths[treeName];
+        var paths = assets[ext];
+        var path;
+
+        if (typeof paths === 'string') {
+          addPath(paths);
+        } else {
+          for (var type in paths) {
+            addPath(paths[type]);
+          }
         }
       }
     }
@@ -354,16 +343,14 @@ module.exports = {
 
     /* If we're not concatenating anything, just return the original tree */
 
-    if (!this._shouldConcatFiles) {
-      return tree;
-    }
+    // if (!this._shouldConcatFiles) {
+    //   return tree;
+    // }
 
     /* Locate all script files and concatenate into one file */
 
-    if (this.scriptsContentFor) {
+    if (this.concatScripts) {
       scriptInputPaths = this.filterAndCleanPaths('js');
-
-      console.log(scriptInputPaths);
 
       concatenatedScripts = concatAndMap(tree, {
         allowNone: true,
@@ -377,8 +364,10 @@ module.exports = {
 
     /* Locate all style files and concatenate into one file */
 
-    if (this.stylesContentFor) {
+    if (this.concatStyles) {
       styleInputPaths = this.filterAndCleanPaths('css');
+
+      console.log(styleInputPaths);
 
       concatenatedStyles = concatAndMap(tree, {
         allowNone: true,
@@ -397,16 +386,16 @@ module.exports = {
     /* Remove empty values and add the remaining to the
     working tree */
 
-    workingTree = mergeTrees(trees);
+    workingTree = mergeTrees(trees.filter(function(e) { return e; }));
 
     /* Remove the unnecessary script and style files */
 
     if (canRemoveOriginals) {
-      if (concatenatedScripts) {
+      if (this.concatScripts) {
         removeFromTree(scriptInputPaths);
       }
 
-      if (concatenatedStyles) {
+      if (this.concatStyles) {
         removeFromTree(styleInputPaths);
       }
     }
