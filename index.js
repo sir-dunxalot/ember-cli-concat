@@ -27,6 +27,17 @@ module.exports = {
 
   _outputPaths: null,
   _shouldConcatFiles: false,
+  wrapScriptsInFunction: true,
+
+ /**
+  Whether or not to original files regardless of concatenation.
+
+  @property preserveOriginals
+  @type Boolean
+  @default true
+  */
+
+  preserveOriginals: false,
 
   cleanPath: function(path) {
     return path.replace(/^\//, '').replace(/\/$/, '');
@@ -106,5 +117,89 @@ module.exports = {
 
   included: function(app) {
     this._outputPaths = app.options.outputPaths;
+  },
+
+  /**
+  @method postprocessTree
+  @param {String} type The Type of tree passed (e.g. js, all, etc)
+  @param {Object} tree The Broccoli tree(s) in the project
+  */
+
+  postprocessTree: function(type, tree) {
+
+    /* If we're not concatenating anything, just return the original tree */
+
+    if (!shouldConcatFiles) {
+      return tree;
+    }
+
+    /*
+    If we are concatenating files, let's get busy...
+    Note: to actually 'save' the concatenated files we have to manually merge the trees after the concat.
+    */
+
+    var outputPath = '/' + cleanPath(this.outputDir) + '/' + this.outputFileName;
+    var paths = this.app.options.outputPaths;
+
+    /* Locate all script files and concatenate into one file. */
+
+    var scriptInputFiles = [
+      cleanPath(paths.vendor['js'])
+    ];
+
+    if (testing) {
+      scriptInputFiles.push(cleanPath(paths.testSupport['js']));
+    }
+
+    scriptInputFiles.push(cleanPath(paths.app['js']));
+
+    var concatenatedScripts = concat(tree, {
+      allowNone: true,
+      inputFiles: scriptInputFiles,
+      outputFile: outputPath + '.js',
+      footer: this.footer,
+      header: this.header,
+      wrapInFunction: this.wrapScriptsInFunction
+    });
+
+    /* Locate all style files and concatenate into one file */
+
+    var styleInputFiles = [
+      cleanPath(paths.vendor['css'])
+    ];
+
+    if (testing) {
+      styleInputFiles.push(cleanPath(paths.testSupport['css']));
+    }
+
+    var appCssPaths = paths.app['css'];
+
+    /* The app tree's CSS uses a KVP relationship so we have to do a little more work than we did for the scripts... */
+
+    for (var path in appCssPaths) {
+      styleInputFiles.push(cleanPath(appCssPaths[path]));
+    }
+
+    var concatenatedStyles = concat(tree, {
+      allowNone: true,
+      footer: this.footer,
+      header: this.header,
+      inputFiles: styleInputFiles,
+      outputFile: outputPath + '.css',
+      wrapInFunction: false
+    });
+
+    /* Combine all the files into the project's tree */
+
+    var workingTree = mergeTrees([tree, concatenatedScripts, concatenatedStyles]);
+
+    /* Remove the unnecessary files */
+    if (!this.preserveOriginals) {
+      workingTree = fileRemover(workingTree, {
+        files: scriptInputFiles.concat(styleInputFiles)
+      });
+    }
+
+    return workingTree;
   }
 };
