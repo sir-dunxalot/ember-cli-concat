@@ -19,15 +19,18 @@ var defaultFor = function(variable, defaultValue) {
 module.exports = {
   name: 'ember-cli-concat',
 
-  scriptsContentFor: 'body',
+  enabled: true,
+  scriptsContentFor: 'body-footer',
   stylesContentFor: 'head-footer',
   outputDir: 'assets',
   outputFileName: 'app',
   useSelfClosingTags: false,
+  wrapScriptsInFunction: true,
 
+  _environment: null,
   _outputPaths: null,
   _shouldConcatFiles: false,
-  wrapScriptsInFunction: true,
+  _inTesting: false,
 
  /**
   Whether or not to original files regardless of concatenation.
@@ -60,7 +63,9 @@ module.exports = {
     var concatPath = this.outputDir + '/' + this.outputFileName;
     var ext, tags;
 
-    if (contentForType === this.scriptsContentFor) {
+    if (contentForType === 'test-head') {
+      this._inTesting = true;
+    } else if (contentForType === this.scriptsContentFor) {
       ext = 'js';
 
       if (this._shouldConcatFiles) {
@@ -93,7 +98,9 @@ module.exports = {
     is before vendor */
 
     var addTag = function(path) {
-      if (path.indexOf('test-loader') === -1) {
+      if (path.indexOf('test-support') > -1 && !this._inTesting) {
+        return;
+      } else if (path.indexOf('test-loader') === -1) {
         tags.splice(1, 0, this.getAssetTag(ext, path));
       }
     }.bind(this);
@@ -116,7 +123,20 @@ module.exports = {
   },
 
   included: function(app) {
+    var environment = app.env.toString();
+    var options = defaultFor(app.options.emberCliConcat, {});
+    var development = environment === 'development';
+
+    this._environment = environment;
     this._outputPaths = app.options.outputPaths;
+
+    for (var option in options) {
+      this[option] = options[option];
+    }
+
+    if ((!development || this.forceConcatenation) && this.enabled) {
+      this._shouldConcatFiles = true;
+    }
   },
 
   /**
@@ -126,10 +146,11 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
+    var cleanPath = this.cleanPath;
 
     /* If we're not concatenating anything, just return the original tree */
 
-    if (!shouldConcatFiles) {
+    if (!this._shouldConcatFiles) {
       return tree;
     }
 
@@ -139,7 +160,7 @@ module.exports = {
     */
 
     var outputPath = '/' + cleanPath(this.outputDir) + '/' + this.outputFileName;
-    var paths = this.app.options.outputPaths;
+    var paths = this._outputPaths;
 
     /* Locate all script files and concatenate into one file. */
 

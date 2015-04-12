@@ -13,6 +13,8 @@ var app = new EmberAddon({
   }
 });
 
+console.log(process.env.EMBER_ENV);
+
 // Use `app.import` to add additional libraries to the generated
 // output files.
 //
