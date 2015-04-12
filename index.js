@@ -182,6 +182,8 @@ module.exports = {
 
   preserveOriginals: false,
 
+  _concatScripts: false,
+  _concatStyles: false,
   _environment: null,
   _outputPaths: null,
   _shouldConcatFiles: false,
@@ -226,25 +228,27 @@ module.exports = {
     var concatPath = this.outputDir + '/' + this.outputFileName;
     var ext, tags;
 
-    if (contentForType === 'test-head') {
-      this._inTesting = true;
-    } else if (contentForType === this.scriptsContentFor) {
+    if (contentForType === this.scriptsContentFor) {
       ext = 'js';
+
+      this._concatScripts = true;
 
       if (this._shouldConcatFiles) {
         tags = getAssetTag(ext, concatPath + '.' + ext);
       } else {
-        tags = this.filterPaths(ext);
+        tags = this.getTags(ext);
       }
 
       return tags;
     } else if (contentForType === this.stylesContentFor) {
       ext = 'css';
 
+      this._concatStyles = true;
+
       if (this._shouldConcatFiles) {
         tags = getAssetTag(ext, concatPath + '.' + ext);
       } else {
-        tags = this.filterPaths(ext);
+        tags = this.getTags(ext);
       }
 
       return tags;
@@ -260,11 +264,11 @@ module.exports = {
     /* Build array in reverse order so each tag is
     in the correct order */
 
-    var addTag = function(path) {
+    var addPath = function(path) {
       if (path.indexOf('test-support') > -1 && !this._inTesting) {
         return;
       } else if (path.indexOf('test-loader') === -1) {
-        tags.splice(1, 0, this.getAssetTag(ext, path));
+        tags.splice(1, 0, path);
       }
     }.bind(this);
 
@@ -274,10 +278,10 @@ module.exports = {
       var path;
 
       if (typeof paths === 'string') {
-        addTag(paths);
+        addPath(paths);
       } else {
         for (var type in paths) {
-          addTag(paths[type]);
+          addPath(paths[type]);
         }
       }
     }
@@ -285,6 +289,12 @@ module.exports = {
     tags.shift(); // Remove placeholder
 
     return tags;
+  },
+
+  getTags: function(ext) {
+    return this.filterPaths(ext).map(function(path) {
+      return this.getAssetTag(ext, path);
+    }.bind(this));
   },
 
   /**
@@ -300,6 +310,7 @@ module.exports = {
     var options = defaultFor(app.options.emberCliConcat, {});
     var development = environment === 'development';
 
+    this._inTesting = app.tests;
     this._environment = environment;
     this._outputPaths = app.options.outputPaths;
 
@@ -319,7 +330,17 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
-    var cleanPath = this.cleanPath;
+    var inProduction = this._environment === 'production';
+    var concatInProduction = inProduction && !this.preserveOriginals;
+    var canRemoveOriginals = !this.preserveOriginals || concatInProduction;
+    var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
+    var concatenatedScripts, concatenatedStyles, outputPath, removeFromTree, scriptInputFiles, styleInputFiles, trees, workingTree;
+
+    removeFromTree = function(inputFiles) {
+      workingTree = fileRemover(workingTree, {
+        files: inputFiles
+      });
+    };
 
     /* If we're not concatenating anything, just return the original tree */
 
@@ -327,74 +348,57 @@ module.exports = {
       return tree;
     }
 
-    /*
-    If we are concatenating files, let's get busy...
-    Note: to actually 'save' the concatenated files we have to
-    manually merge the trees after the concat.
-    */
-
-    var outputPath = '/' + cleanPath(this.outputDir) + '/' + this.outputFileName;
-    var paths = this._outputPaths;
-
     /* Locate all script files and concatenate into one file. */
 
-    var scriptInputFiles = [
-      cleanPath(paths.vendor['js'])
-    ];
+    if (this.scriptsContentFor) {
+      scriptInputFiles = filterPaths('js');
 
-    if (testing) {
-      scriptInputFiles.push(cleanPath(paths.testSupport['js']));
+      concatenatedScripts = concat(tree, {
+        allowNone: true,
+        inputFiles: scriptInputFiles,
+        outputFile: outputPath + '.js',
+        footer: this.footer,
+        header: this.header,
+        wrapInFunction: this.wrapScriptsInFunction
+      });
     }
-
-    scriptInputFiles.push(cleanPath(paths.app['js']));
-
-    var concatenatedScripts = concat(tree, {
-      allowNone: true,
-      inputFiles: scriptInputFiles,
-      outputFile: outputPath + '.js',
-      footer: this.footer,
-      header: this.header,
-      wrapInFunction: this.wrapScriptsInFunction
-    });
 
     /* Locate all style files and concatenate into one file */
 
-    var styleInputFiles = [
-      cleanPath(paths.vendor['css'])
-    ];
+    if (this.stylesContentFor) {
+      styleInputFiles = filterPaths('css');
 
-    if (testing) {
-      styleInputFiles.push(cleanPath(paths.testSupport['css']));
+      concatenatedStyles = concat(tree, {
+        allowNone: true,
+        footer: this.footer,
+        header: this.header,
+        inputFiles: styleInputFiles,
+        outputFile: outputPath + '.css',
+        wrapInFunction: false
+      });
     }
-
-    var appCssPaths = paths.app['css'];
-
-    /* The app tree's CSS uses a KVP relationship so we have
-    to do a little more work than we did for the scripts... */
-
-    for (var path in appCssPaths) {
-      styleInputFiles.push(cleanPath(appCssPaths[path]));
-    }
-
-    var concatenatedStyles = concat(tree, {
-      allowNone: true,
-      footer: this.footer,
-      header: this.header,
-      inputFiles: styleInputFiles,
-      outputFile: outputPath + '.css',
-      wrapInFunction: false
-    });
 
     /* Combine all the files into the project's tree */
 
-    var workingTree = mergeTrees([tree, concatenatedScripts, concatenatedStyles]);
+    trees = [tree, concatenatedScripts, concatenatedStyles];
 
-    /* Remove the unnecessary files */
+    /* Remove empty values and add the remaining to the
+    working tree */
 
-    if (!this.preserveOriginals) {
-      workingTree = fileRemover(workingTree, {
-        files: scriptInputFiles.concat(styleInputFiles)
-      });
+    workingTree = mergeTrees(
+      files.filter(function(e) { return e; })
+    );
+
+    /* Remove the unnecessary script and style files */
+
+    if (canRemoveOriginals) {
+      if (concatenatedScripts) {
+        removeFromTree(scriptInputFiles);
+      }
+
+      if (concatenatedStyles) {
+        removeFromTree(styleInputFiles);
+      }
     }
 
     return workingTree;
