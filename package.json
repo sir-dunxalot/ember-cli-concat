@@ -22,8 +22,9 @@
   "license": "MIT",
   "dependencies": {
     "broccoli-file-remover": "^0.3.1",
+    "broccoli-funnel": "^0.2.2",
     "broccoli-merge-trees": "^0.2.1",
-    "broccoli-sourcemap-concat": "^0.4.1"
+    "broccoli-sourcemap-concat": "^0.4.3"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.0",

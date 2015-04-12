@@ -1,9 +1,10 @@
 import Em from 'ember';
 import { test } from 'ember-qunit';
+import { module } from 'qunit';
 import startApp from '../helpers/start-app';
 import config from 'dummy/config/environment';
 
-var App;
+var App, assert;
 
 module('Ember CLI Concat', {
 
@@ -23,10 +24,11 @@ var checkTagExists = function(fileName) {
   var element = isCSS ? 'link' : 'script';
   var tagExists = $(element + '[' + attribute + '="/assets/' + fileName + '"]').length === 1;
 
-  ok(tagExists, fileName + ' ' + element + ' tag should be written to to the index.html file');
+  assert.ok(tagExists, fileName + ' ' + element + ' tag should be written to to the index.html file');
 };
 
-test('Assets added to index.html file', function() {
+test('Assets added to index.html file', function(_assert) {
+  assert = _assert; // Hack
 
   andThen(function() {
     var env = config.environment;
@@ -49,7 +51,7 @@ test('Assets added to index.html file', function() {
       checkTagExists('app.css');
       checkTagExists('app.js');
     } else {
-      expect(0);
+      assert.expect(0);
     }
 
   });
