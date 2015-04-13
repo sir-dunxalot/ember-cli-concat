@@ -35,6 +35,22 @@ var defaultFor = function(variable, defaultValue) {
 module.exports = {
   name: 'ember-cli-concat',
 
+  js: {
+    concat: false,
+    contentFor: 'body-footer',
+    footer: null,
+    header: null,
+    preserveOriginal: false
+  },
+
+  css: {
+    concat: true,
+    contentFor: 'head-footer',
+    footer: null,
+    header: null,
+    preserveOriginal: false
+  },
+
   concatScripts: false,
   concatStyles: true,
 
@@ -49,17 +65,7 @@ module.exports = {
   @default null
   */
 
-  footer: null,
-
-  /**
-  An override the developer can utilize to concatenate regardless of the environment. Useful for debuggin purpuses.
-
-  @property forceConcatenation
-  @type Boolean
-  @default false
-  */
-
-  forceConcatenation: false,
+  // footer: null,
 
   /**
   The string to add to the start of all concatenated files. Usually this is a comment. For example:
@@ -72,10 +78,10 @@ module.exports = {
   @default null
   */
 
-  header: null,
+  // header: null,
 
   /**
-  Disables concatenation of files no matter what other options are set (e.g. `forceConcatination: true`). Useful for debugging purposes.
+  Disables concatenation of files. Useful for debugging purposes.
 
   @property enabled
   @type Boolean
@@ -92,7 +98,7 @@ module.exports = {
   @default 'body'
   */
 
-  scriptsContentFor: 'body-footer',
+  // scriptsContentFor: 'body-footer',
 
   /**
   The name of the Ember CLI content-for hook to use to add styles to your app. The content-for hooks are generally found in index.html files.
@@ -112,7 +118,7 @@ module.exports = {
   */
 
 
-  stylesContentFor: 'head-footer',
+  // stylesContentFor: 'head-footer',
 
   /**
   The output directory that the concatenated files will be saved to. Define it as a relative path with no opening or closing slashes. For example:
@@ -183,13 +189,11 @@ module.exports = {
   @default true
   */
 
-  preserveOriginals: false,
+  // preserveOriginals: false,
 
-  _environment: null,
   _inTesting: false,
   _inProduction: false,
   _outputPaths: null,
-  _shouldConcatFiles: false,
 
   /**
   Cleans up a path by removing the opening and closing forward slashes. Essentially, this turns an absolute path into a relative path and protects against typos in the developer-defined options.
@@ -205,18 +209,6 @@ module.exports = {
     return path.replace(/^\//, '').replace(/\/$/, '');
   },
 
-  getAssetTag: function(ext, path) {
-    var closing;
-
-    if (ext === 'js') {
-      return '<script src="' + path + '"></script>\n';
-    } else {
-      closing = this.useSelfClosingTags ? ' /' : '';
-
-      return '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
-    }
-  },
-
   /**
   Append `<link>` and `<script>` tags to the app's HTML file to load only the assets we require.
   The contentFor hook is run once for each `content-for` in our application. `head` and `body`, which are the two we hook onto, are standard to Ember CLI builds and are found in the app's main HTML filem which is `app/index.html` by default.
@@ -226,16 +218,11 @@ module.exports = {
   */
 
   contentFor: function(contentForType) {
-    var outputPaths = this._outputPaths;
-    var scriptsContentFor = this.scriptsContentFor;
-    var stylesContentFor = this.stylesContentFor;
-    var ext, tags;
-
     if (contentForType === 'test-support-prefix') {
       this._inTesting = true;
-    } else if (contentForType === this.scriptsContentFor) {
+    } else if (contentForType === this.js.contentFor) {
       return this.getTags('js');
-    } else if (contentForType === this.stylesContentFor) {
+    } else if (contentForType === this.css.contentFor) {
       return this.getTags('css');
     } else {
       return;
@@ -249,9 +236,9 @@ module.exports = {
   },
 
   filterPaths: function(ext, requireOriginals) {
-    var assertion = ext === 'js' ? 'concatScripts' : 'concatStyles';
-    var tags = [];
     var outputPaths = this._outputPaths;
+    var tags = [];
+    var typeOptions = this[ext];
     var addPath, concatPath;
 
     requireOriginals = defaultFor(requireOriginals, false);
@@ -270,7 +257,7 @@ module.exports = {
       }
     }.bind(this);
 
-    if (this[assertion] && !requireOriginals) {
+    if (typeOptions.concat && !requireOriginals) {
       concatPath = this.outputDir + '/' + this.outputFileName;
 
       addPath(concatPath + '.' + ext);
@@ -293,6 +280,18 @@ module.exports = {
     return tags;
   },
 
+  getAssetTag: function(ext, path) {
+    var closing;
+
+    if (ext === 'js') {
+      return '<script src="' + path + '"></script>\n';
+    } else {
+      closing = this.useSelfClosingTags ? ' /' : '';
+
+      return '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
+    }
+  },
+
   getTags: function(ext) {
     return this.filterPaths(ext).map(function(path) {
       return this.getAssetTag(ext, path);
@@ -311,17 +310,21 @@ module.exports = {
     var environment = app.env.toString();
     var options = defaultFor(app.options.emberCliConcat, {});
 
-    this._includeTestAssets = app.tests;
-    this._environment = environment;
     this._inProduction = environment === 'production';
     this._outputPaths = app.options.outputPaths;
 
-    for (var option in options) {
-      this[option] = options[option];
-    }
+    // Overwrite default options
 
-    if ((this._inProduction || this.forceConcatenation) && this.enabled) {
-      this._shouldConcatFiles = true;
+    for (var option in options) {
+      var objectOrOption = options[option];
+
+      if (typeof objectOrOption === 'object') {
+        for (var typeOption in objectOrOption) {
+          this[option][typeOption] = objectOrOption[typeOption];
+        }
+      } else {
+        this[option] = options[option];
+      }
     }
   },
 
@@ -332,10 +335,11 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
-    var concatInProduction = this.inProduction && !this.preserveOriginals;
-    var canRemoveOriginals = !this.preserveOriginals || concatInProduction;
     var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
-    var concatenatedScripts, concatenatedStyles, outputPath, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
+    var cssOptions = this.css;
+    var jsOptions = this.js;
+
+    var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 
     removeFromTree = function(inputFiles) {
       workingTree = fileRemover(workingTree, {
@@ -343,38 +347,30 @@ module.exports = {
       });
     };
 
-    /* If we're not concatenating anything, just return the original tree */
-
-    // if (!this._shouldConcatFiles) {
-    //   return tree;
-    // }
-
     /* Locate all script files and concatenate into one file */
 
-    if (this.concatScripts) {
+    if (jsOptions.concat) {
       scriptInputPaths = this.filterAndCleanPaths('js');
 
       concatenatedScripts = concatAndMap(tree, {
         allowNone: true,
         inputFiles: scriptInputPaths,
         outputFile: outputPath + '.js',
-        footer: this.footer,
-        header: this.header,
+        footer: jsOptions.footer,
+        header: jsOptions.header,
         wrapInFunction: this.wrapScriptsInFunction
       });
     }
 
     /* Locate all style files and concatenate into one file */
 
-    if (this.concatStyles) {
+    if (cssOptions.concat) {
       styleInputPaths = this.filterAndCleanPaths('css');
-
-      console.log(styleInputPaths);
 
       concatenatedStyles = concatAndMap(tree, {
         allowNone: true,
-        footer: this.footer,
-        header: this.header,
+        footer: cssOptions.footer,
+        header: cssOptions.header,
         inputFiles: styleInputPaths,
         outputFile: outputPath + '.css',
         wrapInFunction: false
@@ -392,14 +388,12 @@ module.exports = {
 
     /* Remove the unnecessary script and style files */
 
-    if (canRemoveOriginals) {
-      if (this.concatScripts) {
-        removeFromTree(scriptInputPaths);
-      }
+    if (jsOptions.concatScripts && jsOptions.preserveOriginal) {
+      removeFromTree(scriptInputPaths);
+    }
 
-      if (this.concatStyles) {
-        removeFromTree(styleInputPaths);
-      }
+    if (cssOptions.concatScripts && cssOptions.preserveOriginal) {
+      removeFromTree(styleInputPaths);
     }
 
     return workingTree;
