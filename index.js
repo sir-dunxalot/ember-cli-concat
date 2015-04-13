@@ -6,7 +6,6 @@
 var concatAndMap = require('broccoli-sourcemap-concat');
 var fileRemover = require('broccoli-file-remover');
 var mergeTrees = require('broccoli-merge-trees');
-var Funnel = require('broccoli-funnel');
 
 /* Helper Functions */
 
@@ -51,35 +50,6 @@ module.exports = {
     preserveOriginal: false
   },
 
-  concatScripts: false,
-  concatStyles: true,
-
-  /**
-  The string to add to the end of all concatenated files. Usually this is a comment. For example:
-  ```
-  string: '// Copyright © I Am Devloper 2014'
-  ```
-
-  @property footer
-  @type String
-  @default null
-  */
-
-  // footer: null,
-
-  /**
-  The string to add to the start of all concatenated files. Usually this is a comment. For example:
-  ```
-  string: '// Author: I Am Devloper'
-  ```
-
-  @property header
-  @type String
-  @default null
-  */
-
-  // header: null,
-
   /**
   Disables concatenation of files. Useful for debugging purposes.
 
@@ -89,36 +59,6 @@ module.exports = {
   */
 
   enabled: true,
-
-  /**
-  The name of the Ember CLI content-for hook to use to add scripts to your app. The content-for hooks are generally found in index.html files.
-
-  @property scriptsContentFor
-  @type String
-  @default 'body'
-  */
-
-  // scriptsContentFor: 'body-footer',
-
-  /**
-  The name of the Ember CLI content-for hook to use to add styles to your app. The content-for hooks are generally found in index.html files.
-  If you're using an Ember CLI version **below** 1.4.0 you should set this value to `head`:
-  ```js
-  // Ember CLI less than v1.4.0
-  var app = new EmberApp({
-    emberCliConcat: {
-      stylesContentFor: 'head'
-    }
-  });
-  ```
-
-  @property stylesContentFor
-  @type String
-  @default 'head-footer'
-  */
-
-
-  // stylesContentFor: 'head-footer',
 
   /**
   The output directory that the concatenated files will be saved to. Define it as a relative path with no opening or closing slashes. For example:
@@ -180,16 +120,6 @@ module.exports = {
   */
 
   wrapScriptsInFunction: true,
-
- /**
-  Whether or not to original files regardless of concatenation.
-
-  @property preserveOriginals
-  @type Boolean
-  @default true
-  */
-
-  // preserveOriginals: false,
 
   _inTesting: false,
   _inProduction: false,
