@@ -35,11 +35,11 @@ module.exports = {
   name: 'ember-cli-concat',
 
   js: {
-    concat: false,
+    concat: true,
     contentFor: 'body-footer',
     footer: null,
     header: null,
-    preserveOriginal: false
+    preserveOriginal: true
   },
 
   css: {
@@ -47,7 +47,7 @@ module.exports = {
     contentFor: 'head-footer',
     footer: null,
     header: null,
-    preserveOriginal: false
+    preserveOriginal: true
   },
 
   /**
@@ -121,7 +121,6 @@ module.exports = {
 
   wrapScriptsInFunction: true,
 
-  _inTesting: false,
   _inProduction: false,
   _outputPaths: null,
 
@@ -148,11 +147,13 @@ module.exports = {
   */
 
   contentFor: function(contentForType) {
-    if (contentForType === 'test-support-prefix') {
-      this._inTesting = true;
-    } else if (contentForType === this.js.contentFor) {
+    if (contentForType === 'concat-js') {
+      // console.log(this.getTags('js'));
+
       return this.getTags('js');
-    } else if (contentForType === this.css.contentFor) {
+    } else if (contentForType === 'concat-css') {
+      // console.log(this.getTags('css'));
+
       return this.getTags('css');
     } else {
       return;
@@ -167,7 +168,7 @@ module.exports = {
 
   filterPaths: function(ext, requireOriginals) {
     var outputPaths = this._outputPaths;
-    var tags = [];
+    var filteredPaths = [];
     var typeOptions = this[ext];
     var addPath, concatPath;
 
@@ -177,13 +178,12 @@ module.exports = {
     in the correct order */
 
     addPath = function(path) {
-      var isTestSupportAsset = path.indexOf('test-support') > -1;
-      var i = isTestSupportAsset ? 1 : 0;
+      /* Don't include test assest in concatination in production */
 
-      if (isTestSupportAsset && !this._inTesting) {
+      if (this._inProduction || path.indexOf('test') > -1) {
         return;
-      } else if (path.indexOf('test-loader') === -1) {
-        tags.splice(i, 0, path);
+      } else {
+        filteredPaths.splice(0, 1, path);
       }
     }.bind(this);
 
@@ -207,7 +207,7 @@ module.exports = {
       }
     }
 
-    return tags;
+    return filteredPaths;
   },
 
   getAssetTag: function(ext, path) {
@@ -272,7 +272,7 @@ module.exports = {
     var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 
     removeFromTree = function(inputFiles) {
-      workingTree = fileRemover(workingTree, {
+      tree = fileRemover(tree, {
         files: inputFiles
       });
     };
@@ -290,6 +290,10 @@ module.exports = {
         header: jsOptions.header,
         wrapInFunction: this.wrapScriptsInFunction
       });
+
+      if (!jsOptions.preserveOriginal) {
+        removeFromTree(scriptInputPaths);
+      }
     }
 
     /* Locate all style files and concatenate into one file */
@@ -305,6 +309,10 @@ module.exports = {
         outputFile: outputPath + '.css',
         wrapInFunction: false
       });
+
+      if (!cssOptions.preserveOriginal) {
+        removeFromTree(styleInputPaths);
+      }
     }
 
     /* Combine all the files into the project's tree */
@@ -314,17 +322,11 @@ module.exports = {
     /* Remove empty values and add the remaining to the
     working tree */
 
-    workingTree = mergeTrees(trees.filter(function(e) { return e; }));
+    workingTree = mergeTrees(trees.filter(function(e) { return e; }), {
+      overwrite: true
+    });
 
     /* Remove the unnecessary script and style files */
-
-    if (jsOptions.concatScripts && jsOptions.preserveOriginal) {
-      removeFromTree(scriptInputPaths);
-    }
-
-    if (cssOptions.concatScripts && cssOptions.preserveOriginal) {
-      removeFromTree(styleInputPaths);
-    }
 
     return workingTree;
   }
