@@ -14,8 +14,15 @@ var options = {
   }
 };
 
-if (environment === 'development') {
-
+if (environment === 'production') {
+  options.emberCliConcat = {
+    css: {
+      concat: true
+    },
+    js: {
+      concat: true
+    }
+  }
 }
 
 var app = new EmberAddon(options);

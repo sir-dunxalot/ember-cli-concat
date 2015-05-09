@@ -35,16 +35,16 @@ module.exports = {
   name: 'ember-cli-concat',
 
   js: {
-    concat: true,
-    contentFor: 'body-footer',
+    concat: false,
+    contentFor: 'concat-js',
     footer: null,
     header: null,
     preserveOriginal: true
   },
 
   css: {
-    concat: true,
-    contentFor: 'head-footer',
+    concat: false,
+    contentFor: 'concat-css',
     footer: null,
     header: null,
     preserveOriginal: true
@@ -119,9 +119,8 @@ module.exports = {
   @default true
   */
 
-  wrapScriptsInFunction: true,
+  wrapScriptsInFunction: false,
 
-  _inProduction: false,
   _outputPaths: null,
 
   /**
@@ -147,47 +146,43 @@ module.exports = {
   */
 
   contentFor: function(contentForType) {
-    if (contentForType === 'concat-js') {
-      // console.log(this.getTags('js'));
-
+    if (contentForType === this.js.contentFor) {
       return this.getTags('js');
-    } else if (contentForType === 'concat-css') {
-      // console.log(this.getTags('css'));
-
+    } else if (contentForType === this.css.contentFor) {
       return this.getTags('css');
     } else {
       return;
     }
   },
 
-  filterAndCleanPaths: function(ext) {
-    return this.filterPaths(ext, true).map(function(path) {
+  filterAndCleanPaths: function(ext, requireOriginalPaths) {
+    return this.filterPaths(ext, requireOriginalPaths).map(function(path) {
       return this.cleanPath(path);
     }.bind(this));
   },
 
-  filterPaths: function(ext, requireOriginals) {
+  filterPaths: function(ext, requireOriginalPaths) {
     var outputPaths = this._outputPaths;
     var filteredPaths = [];
     var typeOptions = this[ext];
     var addPath, concatPath;
 
-    requireOriginals = defaultFor(requireOriginals, false);
+    requireOriginalPaths = defaultFor(requireOriginalPaths, false);
 
     /* Build array in custom order so each tag is
     in the correct order */
 
     addPath = function(path) {
-      /* Don't include test assest in concatination in production */
+      /* Don't include test assest in concatination */
 
-      if (this._inProduction || path.indexOf('test') > -1) {
+      if (path.indexOf('test') > -1) {
         return;
       } else {
-        filteredPaths.splice(0, 1, path);
+        filteredPaths.unshift(path);
       }
     }.bind(this);
 
-    if (typeOptions.concat && !requireOriginals) {
+    if (typeOptions.concat && !requireOriginalPaths) {
       concatPath = this.outputDir + '/' + this.outputFileName;
 
       addPath(concatPath + '.' + ext);
@@ -240,7 +235,6 @@ module.exports = {
     var environment = app.env.toString();
     var options = defaultFor(app.options.emberCliConcat, {});
 
-    this._inProduction = environment === 'production';
     this._outputPaths = app.options.outputPaths;
 
     // Overwrite default options
@@ -280,7 +274,7 @@ module.exports = {
     /* Locate all script files and concatenate into one file */
 
     if (jsOptions.concat) {
-      scriptInputPaths = this.filterAndCleanPaths('js');
+      scriptInputPaths = this.filterAndCleanPaths('js', true);
 
       concatenatedScripts = concatAndMap(tree, {
         allowNone: true,
@@ -299,7 +293,7 @@ module.exports = {
     /* Locate all style files and concatenate into one file */
 
     if (cssOptions.concat) {
-      styleInputPaths = this.filterAndCleanPaths('css');
+      styleInputPaths = this.filterAndCleanPaths('css', true);
 
       concatenatedStyles = concatAndMap(tree, {
         allowNone: true,
