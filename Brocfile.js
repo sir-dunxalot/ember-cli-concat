@@ -7,7 +7,7 @@ var environment = process.env.EMBER_ENV;
 var options = {
   storeConfigInMeta: false,
   fingerprint: {
-    enabled: true,
+    enabled: false,
   },
   emberCliConcat: {
     /* Test custom options here */
