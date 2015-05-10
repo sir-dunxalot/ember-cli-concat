@@ -146,7 +146,9 @@ module.exports = {
   */
 
   contentFor: function(contentForType) {
-    if (contentForType === this.js.contentFor) {
+    if (!this.enabled) {
+      return;
+    } else if (contentForType === this.js.contentFor) {
       return this.getTags('js');
     } else if (contentForType === this.css.contentFor) {
       return this.getTags('css');
@@ -262,6 +264,10 @@ module.exports = {
     var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
     var cssOptions = this.css;
     var jsOptions = this.js;
+
+    if (!this.enabled) {
+      return tree;
+    }
 
     var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 
