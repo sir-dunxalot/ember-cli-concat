@@ -28,7 +28,8 @@
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.0.2",
-    "chai": "^2.3.0",
+    "chai": "^2.1.0",
+    "chai-fs": "git://github.com/sir-dunxalot/chai-fs.git#master",
     "ember-cli": "0.2.3",
     "ember-cli-app-version": "0.3.3",
     "ember-cli-content-security-policy": "0.4.0",
