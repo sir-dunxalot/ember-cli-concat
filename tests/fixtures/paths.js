@@ -1,3 +1,5 @@
+/* Defaults from https://github.com/ember-cli/ember-cli/blob/master/lib/broccoli/ember-app.js */
+
 var appCssPath = '/assets/dummy.css';
 var appJsPath = '/assets/dummy.js';
 var vendorCssPath = '/assets/vendor.css';

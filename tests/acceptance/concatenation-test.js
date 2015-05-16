@@ -1,5 +1,4 @@
-var broccoli = require('broccoli');
-var emberCliConcat = require('../..'); // index.js
+var emberCliConcat = require('../helpers/ember-cli-concat');
 var root = process.cwd();
 var defaultOptions = require('../fixtures/default-options');
 var builder, currentOptions;
@@ -8,50 +7,7 @@ var assertFileExists = require('../helpers/assert/file-exists');
 var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
 
 var paths = require('../fixtures/paths');
-
-function setOptions(options, environment) {
-  options = options || {};
-  environment = environment || 'development';
-
-  /* Default from https://github.com/ember-cli/ember-cli/blob/master/lib/broccoli/ember-app.js */
-
-  options.outputPaths = paths.outputPaths;
-
-  currentOptions = options;
-
-  emberCliConcat.included({
-    env: environment,
-    options: options
-  });
-}
-
-function concatTree() {
-  return emberCliConcat.postprocessTree('all', 'dist');
-}
-
-function buildWithOptions(concatOptions, environment) {
-  resetDefaultOptions();
-
-  setOptions({
-    emberCliConcat: concatOptions
-  }, environment);
-
-  builder = new broccoli.Builder(concatTree());
-
-  return builder.build();
-}
-
-function getOutputPath(ext, fileName) {
-  fileName = fileName || defaultOptions.outputFileName;
-
-  return '/' + defaultOptions.outputDir + '/' + fileName + '.' + ext;
-}
-
-function resetDefaultOptions() {
-  setOptions({
-    emberCliConcat: defaultOptions
-  });
-}
+var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Concatenation', function() {
   this.timeout(10000);
@@ -61,13 +17,13 @@ describe('Acceptance - Concatenation', function() {
   });
 
   afterEach(function() {
-    if (builder) {
-      builder.cleanup();
+    if (emberCliConcat.builder) {
+      emberCliConcat.builder.cleanup();
     }
   });
 
   it('compiles the correct files with default options', function() {
-    return buildWithOptions().then(function(results) {
+    return emberCliConcat.buildWithOptions().then(function(results) {
       var directory = results.directory;
 
       /* Check each file in the default output paths exists */
@@ -84,7 +40,7 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('concats JavaScript', function() {
-    return buildWithOptions({
+    return emberCliConcat.buildWithOptions({
       js: {
         concat: true
       }
@@ -112,7 +68,7 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('concats JavaScript and removes originals', function() {
-    return buildWithOptions({
+    return emberCliConcat.buildWithOptions({
       js: {
         concat: true,
         preserveOriginal: false
@@ -139,7 +95,7 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('concats CSS', function() {
-    return buildWithOptions({
+    return emberCliConcat.buildWithOptions({
       css: {
         concat: true
       }
@@ -164,7 +120,7 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('concats CSS and removes originals', function() {
-    return buildWithOptions({
+    return emberCliConcat.buildWithOptions({
       css: {
         concat: true,
         preserveOriginal: false
@@ -194,7 +150,7 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('concats JS and CSS', function() {
-    return buildWithOptions({
+    return emberCliConcat.buildWithOptions({
       js: {
         concat: true
       },
@@ -222,7 +178,7 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('concats JS and CSS and removes originals', function() {
-    return buildWithOptions({
+    return emberCliConcat.buildWithOptions({
       js: {
         concat: true,
         preserveOriginal: false
