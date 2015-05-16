@@ -1,44 +1,13 @@
 var broccoli = require('broccoli');
 var emberCliConcat = require('../..'); // index.js
 var root = process.cwd();
+var defaultOptions = require('../fixtures/default-options');
 var builder, currentOptions;
 
-var assertFileExists = require('../helpers/assert-file-exists');
-var assertFileDoesNotExist = require('../helpers/assert-file-does-not-exist');
+var assertFileExists = require('../helpers/assert/file-exists');
+var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
 
-var appCssPath = '/assets/dummy.css';
-var appJsPath = '/assets/dummy.js';
-var vendorCssPath = '/assets/vendor.css';
-var vendorJsPath = '/assets/vendor.js';
-
-var cssPaths = [appCssPath, vendorCssPath];
-var jsPaths = [appJsPath, vendorJsPath];
-
-var assetPaths = [appCssPath, appJsPath, vendorCssPath, vendorJsPath];
-
-var defaultOptions = {
-  js: {
-    concat: false,
-    contentFor: 'concat-js',
-    footer: null,
-    header: null,
-    preserveOriginal: true
-  },
-
-  css: {
-    concat: false,
-    contentFor: 'concat-css',
-    footer: null,
-    header: null,
-    preserveOriginal: true
-  },
-
-  enabled: true,
-  outputDir: 'assets',
-  outputFileName: 'app',
-  useSelfClosingTags: false,
-  wrapScriptsInFunction: false
-};
+var paths = require('../fixtures/paths');
 
 function setOptions(options, environment) {
   options = options || {};
@@ -46,26 +15,7 @@ function setOptions(options, environment) {
 
   /* Default from https://github.com/ember-cli/ember-cli/blob/master/lib/broccoli/ember-app.js */
 
-  options.outputPaths = {
-    app: {
-      html: 'index.html',
-      css: {
-        'app': appCssPath
-      },
-      js: appJsPath
-    },
-    vendor: {
-      css: vendorCssPath,
-      js: vendorJsPath
-    },
-    testSupport: {
-      css: '/assets/test-support.css',
-      js: {
-        testSupport: '/assets/test-support.js',
-        testLoader: '/assets/test-loader.js'
-      }
-    }
-  };
+  options.outputPaths = paths.outputPaths;
 
   currentOptions = options;
 
@@ -81,7 +31,6 @@ function concatTree() {
 
 function buildWithOptions(concatOptions, environment) {
   resetDefaultOptions();
-
 
   setOptions({
     emberCliConcat: concatOptions
@@ -123,7 +72,7 @@ describe('Acceptance - Concatenation', function() {
 
       /* Check each file in the default output paths exists */
 
-      assetPaths.forEach(function(path) {
+      paths.all.forEach(function(path) {
         assertFileExists(directory, path);
       });
 
@@ -145,7 +94,7 @@ describe('Acceptance - Concatenation', function() {
       /* We're not overwriting so the originals should
       all still exist */
 
-      assetPaths.forEach(function(path) {
+      paths.all.forEach(function(path) {
         assertFileExists(directory, path);
       });
 
@@ -173,14 +122,14 @@ describe('Acceptance - Concatenation', function() {
 
       /* The CSS files should still exist */
 
-      cssPaths.forEach(function(path) {
+      paths.css.forEach(function(path) {
         assertFileExists(directory, path);
       });
 
       /* But the new app.js file should be the
       only js file */
 
-      jsPaths.forEach(function(path) {
+      paths.js.forEach(function(path) {
         assertFileDoesNotExist(directory, path);
       });
 
@@ -200,7 +149,7 @@ describe('Acceptance - Concatenation', function() {
       /* We're not overwriting so the originals should
       all still exist */
 
-      assetPaths.forEach(function(path) {
+      paths.all.forEach(function(path) {
         assertFileExists(directory, path);
       });
 
@@ -225,7 +174,7 @@ describe('Acceptance - Concatenation', function() {
 
       /* The JS files should still exist */
 
-      jsPaths.forEach(function(path) {
+      paths.js.forEach(function(path) {
         assertFileExists(directory, path);
       });
 
@@ -235,7 +184,7 @@ describe('Acceptance - Concatenation', function() {
       /* But the new app.css file should be the
       only CSS file */
 
-      cssPaths.forEach(function(path) {
+      paths.css.forEach(function(path) {
         assertFileDoesNotExist(directory, path);
       });
 
@@ -257,7 +206,7 @@ describe('Acceptance - Concatenation', function() {
 
       /* The original files should still exist */
 
-      assetPaths.forEach(function(path) {
+      paths.all.forEach(function(path) {
         assertFileExists(directory, path);
       });
 
@@ -287,7 +236,7 @@ describe('Acceptance - Concatenation', function() {
 
       /* The original files should still exist */
 
-      assetPaths.forEach(function(path) {
+      paths.all.forEach(function(path) {
         assertFileDoesNotExist(directory, path);
       });
 
