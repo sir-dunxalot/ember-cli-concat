@@ -33,6 +33,12 @@ module.exports = {
     return this.builder.build();
   },
 
+  getAssetTagsAsString: function(ext) {
+    var contentForType = defaultOptions[ext].contentFor;
+
+    return emberCliConcat.contentFor(contentForType).join();
+  },
+
   getOutputPath: function(ext, fileName) {
     fileName = fileName || defaultOptions.outputFileName;
 

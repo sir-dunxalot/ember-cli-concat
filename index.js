@@ -185,7 +185,7 @@ module.exports = {
     }.bind(this);
 
     if (typeOptions.concat && !requireOriginalPaths) {
-      concatPath = this.outputDir + '/' + this.outputFileName;
+      concatPath = '/' + this.outputDir + '/' + this.outputFileName;
 
       addPath(concatPath + '.' + ext);
     } else {
