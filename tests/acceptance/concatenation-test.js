@@ -1,12 +1,12 @@
 var emberCliConcat = require('../helpers/ember-cli-concat');
-var root = process.cwd();
 var defaultOptions = require('../fixtures/default-options');
-var builder, currentOptions;
+var paths = require('../fixtures/paths');
+var root = process.cwd();
+
+/* Test helpers */
 
 var assertFileExists = require('../helpers/assert/file-exists');
 var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
-
-var paths = require('../fixtures/paths');
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Concatenation', function() {

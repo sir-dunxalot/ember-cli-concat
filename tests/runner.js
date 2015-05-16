@@ -26,9 +26,10 @@ if (arg === 'all') {
   mocha.addFile(arg);
 } else {
   addFiles(mocha, '/**/*-test.js');
+  // addFiles(mocha, '/**/asset-tag-test.js');
 }
 
-chai.use(require('chai-fs'));
+chai.use(require('chai-fs')); // Add Node fs tests
 
 mocha.run(function(failures) {
   process.on('exit', function() {

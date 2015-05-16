@@ -5,18 +5,18 @@ var paths = require('../fixtures/paths');
 
 module.exports = {
   builder: null,
-  currentOptions: null,
+  module: emberCliConcat,
 
   setOptions: function(options, environment) {
     options = options || {};
     environment = environment || 'development';
 
-    options.outputPaths = paths.outputPaths;
-    this.currentOptions = options;
-
     emberCliConcat.included({
       env: environment,
-      options: options
+      options: {
+        emberCliConcat: options,
+        outputPaths: paths.outputPaths
+      }
     });
   },
 
@@ -24,12 +24,9 @@ module.exports = {
     return emberCliConcat.postprocessTree('all', 'dist');
   },
 
-  buildWithOptions: function(concatOptions, environment) {
+  buildWithOptions: function(options, environment) {
     this.resetDefaultOptions();
-
-    this.setOptions({
-      emberCliConcat: concatOptions
-    }, environment);
+    this.setOptions(options, environment);
 
     this.builder = new broccoli.Builder(this.concatTree());
 
@@ -43,8 +40,6 @@ module.exports = {
   },
 
   resetDefaultOptions: function() {
-    this.setOptions({
-      emberCliConcat: defaultOptions
-    });
+    this.setOptions(defaultOptions);
   }
 }
