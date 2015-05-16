@@ -81,11 +81,13 @@ describe('Acceptance - Custom Options', function() {
 
       assert.include(tags, cssPath);
       assertFileExists(directory, cssPath);
+      assertFileDoesNotExist(directory, defaultOptions._outputPath + 'css');
 
       tags = emberCliConcat.getAssetTagsAsString('js');
 
       assert.include(tags, jsPath);
       assertFileExists(directory, jsPath);
+      assertFileDoesNotExist(directory, defaultOptions._outputPath + 'js');
 
       assertFileExists(directory, getOutputPath('map'));      
     });

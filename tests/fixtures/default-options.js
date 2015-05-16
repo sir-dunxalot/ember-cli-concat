@@ -19,5 +19,7 @@ module.exports = {
   outputDir: 'assets',
   outputFileName: 'app',
   useSelfClosingTags: false,
-  wrapScriptsInFunction: false
+  wrapScriptsInFunction: false,
+
+  _outputPath: '/assets/app.' // Added for convenience
 };
