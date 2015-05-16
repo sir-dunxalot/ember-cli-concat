@@ -4,14 +4,11 @@ var emberCliConcat = require('../..'); // index.js
 var root = process.cwd();
 var builder, currentOptions;
 
-// var setHtmlTags = emberCliConcat.contentFor // function(contentForType)
-// var setOptions = emberCliConcat.included; // function(app)
-// var concatTree = emberCliConcat.postprocessTree; // function(type, tree)
-
-
-function setOptions(options, env) {
+function setOptions(options, environment) {
   options = options || {};
-  env = env || 'development';
+  environment = environment || 'development';
+
+  /* Default from https://github.com/ember-cli/ember-cli/blob/master/lib/broccoli/ember-app.js */
 
   options.outputPaths = {
     app: {
@@ -34,16 +31,24 @@ function setOptions(options, env) {
     }
   };
 
-  currentOptions = {
-    env: env,
-    options: options
-  };
+  currentOptions = options;
 
-  emberCliConcat.included(currentOptions);
+  emberCliConcat.included({
+    env: environment,
+    options: options
+  });
 }
 
 function concatTree() {
   return emberCliConcat.postprocessTree('all', 'dist');
+}
+
+function buildWithOptions(options, environment) {
+  setOptions(options, environment);
+
+  builder = new broccoli.Builder(concatTree());
+
+  return builder.build();
 }
 
 describe('Acceptance - Concatenation', function() {
@@ -60,24 +65,11 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('compiles the correct files with default options', function() {
-    setOptions({
-      emberCliConcat: {
-        js: {
-          concat: true,
-          preserveOriginal: false
-        },
-        css: {
-          concat: true,
-          preserveOriginal: false
-        }
-      }
-    });
-
-    builder = new broccoli.Builder(concatTree());
-
-    return builder.build().then(function(results) {
+    return buildWithOptions().then(function(results) {
       var directory = results.directory;
       var outputPaths = currentOptions.outputPaths;
+
+      /* Check each file in the default output paths exists */
 
       for (var treeName in outputPaths) {
         var assets = outputPaths[treeName];
@@ -98,31 +90,3 @@ describe('Acceptance - Concatenation', function() {
     });
   });
 });
-
-
-  // it('compiles the correct files with default options', function() {
-  //   setOptions({
-  //     emberCliConcat: {
-  //       js: {
-  //         concat: true,
-  //         preserveOriginal: false
-  //       },
-  //       css: {
-  //         concat: true,
-  //         preserveOriginal: false
-  //       }
-  //     }
-  //   });
-
-  //   console.log(emberCliConcat)
-
-  //   builder = new broccoli.Builder(concatTree());
-
-  //   return builder.build().then(function(results) {
-  //     var directory = results.directory;
-
-  //     // console.log(fs.readdirSync(directory + '/assets'));
-
-  //     assertFileExists(directory, '/assets/app.css');
-  //   });
-  // });

@@ -1,5 +1,6 @@
 'use strict';
 
+var chai = require('chai');
 var glob = require('glob');
 var Mocha = require('mocha');
 if (process.env.EOLNEWLINE) {
@@ -26,6 +27,8 @@ if (arg === 'all') {
 } else {
   addFiles(mocha, '/**/*-test.js');
 }
+
+chai.use(require('chai-fs'));
 
 mocha.run(function(failures) {
   process.on('exit', function() {
