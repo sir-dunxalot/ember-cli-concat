@@ -119,7 +119,7 @@ module.exports = {
   @default true
   */
 
-  wrapScriptsInFunction: false,
+  wrapScriptsInFunction: false, // TODO - Deprecate
 
   _outputPaths: null,
 

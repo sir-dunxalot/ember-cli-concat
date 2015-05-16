@@ -1,15 +1,21 @@
+var chai = require('chai');
 var emberCliConcat = require('../helpers/ember-cli-concat');
 var defaultOptions = require('../fixtures/default-options');
+var getContentPosition = require('../helpers/get-content-position');
 var paths = require('../fixtures/paths');
 var root = process.cwd();
 
 /* Test helpers */
 
+var assert = chai.assert;
+var assertFileContains = require('../helpers/assert/file-contains');
 var assertFileExists = require('../helpers/assert/file-exists');
 var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
+var assertFileHasContent = require('../helpers/assert/file-has-content');
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Concatenation', function() {
+  this.timeout(10000);
 
   beforeEach(function() {
     process.chdir(root);
@@ -111,7 +117,7 @@ describe('Acceptance - Concatenation', function() {
       assertFileExists(directory, getOutputPath('map', 'dummy'));
       assertFileExists(directory, getOutputPath('map', 'vendor'));
 
-      /* But so should the new app.css file */
+       But so should the new app.css file 
 
       assertFileExists(directory, getOutputPath('css'));
       assertFileDoesNotExist(directory, getOutputPath('map'));
@@ -200,6 +206,38 @@ describe('Acceptance - Concatenation', function() {
       assertFileExists(directory, getOutputPath('js'));
       assertFileExists(directory, getOutputPath('css'));
       assertFileExists(directory, getOutputPath('map'));
+    });
+  });
+
+  it('concatenates content, not just file paths', function() {
+    return emberCliConcat.buildWithOptions({
+      js: {
+        concat: true
+      },
+      css: {
+        concat: true
+      }
+    }).then(function(results) {
+      var appContent = 'dummy\/app';
+      var directory = results.directory;
+      var cssPath = getOutputPath('css');
+      var jsPath = getOutputPath('js');
+      var vendorContent = 'define = function';
+      var vendorPosition, appPosition;
+
+      assertFileHasContent(directory, cssPath);
+      assertFileHasContent(directory, jsPath);
+
+      /* Assert the JS contains vendor and app content */
+
+      assertFileContains(directory, jsPath, vendorContent);
+      assertFileContains(directory, jsPath, appContent);
+
+      vendorPosition = getContentPosition(directory, jsPath, vendorContent);
+      appPosition = getContentPosition(directory, jsPath, appContent);
+
+      assert.isAbove(appPosition, vendorPosition,
+        'Vendor JS should be before app JS in the concatenated JS');
     });
   });
 });

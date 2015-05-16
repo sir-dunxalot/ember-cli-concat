@@ -34,7 +34,7 @@ module.exports = {
   },
 
   getAssetTagsAsString: function(ext) {
-    var contentForType = defaultOptions[ext].contentFor;
+    var contentForType = emberCliConcat[ext].contentFor;
 
     return emberCliConcat.contentFor(contentForType).join();
   },
