@@ -10,7 +10,6 @@ var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Concatenation', function() {
-  this.timeout(10000);
 
   beforeEach(function() {
     process.chdir(root);

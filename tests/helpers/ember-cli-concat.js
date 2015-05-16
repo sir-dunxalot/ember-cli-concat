@@ -40,9 +40,9 @@ module.exports = {
   },
 
   getOutputPath: function(ext, fileName) {
-    fileName = fileName || defaultOptions.outputFileName;
+    fileName = fileName || emberCliConcat.outputFileName;
 
-    return '/' + defaultOptions.outputDir + '/' + fileName + '.' + ext;
+    return '/' + emberCliConcat.outputDir + '/' + fileName + '.' + ext;
   },
 
   resetDefaultOptions: function() {

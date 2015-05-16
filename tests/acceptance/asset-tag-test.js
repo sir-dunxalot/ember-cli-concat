@@ -1,6 +1,6 @@
 var chai = require('chai');
-var emberCliConcat = require('../helpers/ember-cli-concat');
 var defaultOptions = require('../fixtures/default-options');
+var emberCliConcat = require('../helpers/ember-cli-concat');
 var paths = require('../fixtures/paths');
 var root = process.cwd();
 
@@ -10,17 +10,6 @@ var assert = chai.assert;
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Asset Tags', function() {
-  this.timeout(10000);
-
-  beforeEach(function() {
-    process.chdir(root);
-  });
-
-  afterEach(function() {
-    if (emberCliConcat.builder) {
-      emberCliConcat.builder.cleanup();
-    }
-  });
 
   it('renders all asset tags', function() {
     var jsContentFor = defaultOptions.js.contentFor;
@@ -33,8 +22,10 @@ describe('Acceptance - Asset Tags', function() {
     tags = emberCliConcat.getAssetTagsAsString('js');
 
     paths.js.forEach(function(path) {
+      var tag = '<script src="' + path +'"></script>';
+
       assert.include(tags, path);
-      assert.include(tags, '<script src="');
+      assert.include(tags, tag);
     });
 
     /* Check CSS content-for tags */
@@ -42,8 +33,10 @@ describe('Acceptance - Asset Tags', function() {
     tags = emberCliConcat.getAssetTagsAsString('css');
 
     paths.css.forEach(function(path) {
+      var tag = '<link rel="stylesheet" href="' + path +'">';
+
       assert.include(tags, path);
-      assert.include(tags, '<link rel="stylesheet" ');
+      assert.include(tags, tag);
     });
   });
 
@@ -109,6 +102,35 @@ describe('Acceptance - Asset Tags', function() {
         concat: true
       },
       css: {
+        concat: true
+      }
+    });
+
+    /* Check JS content-for tags */
+
+    tags = emberCliConcat.getAssetTagsAsString('js');
+
+    assert.include(tags, getOutputPath('js'));
+
+    /* Check CSS content-for tags */
+
+    tags = emberCliConcat.getAssetTagsAsString('css');
+
+    assert.include(tags, getOutputPath('css'));
+  });
+
+  it('renders asset tags with JS and CSS concatenation with custom content-for hooks', function() {
+    var jsContentFor = defaultOptions.js.contentFor;
+    var tags;
+
+    emberCliConcat.resetDefaultOptions();
+    emberCliConcat.setOptions({
+      js: {
+        contentFor: 'fish',
+        concat: true
+      },
+      css: {
+        contentFor: 'and-chips',
         concat: true
       }
     });
