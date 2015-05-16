@@ -1,8 +1,20 @@
-var assertFileExists = require('../helpers/assert-file-exists');
 var broccoli = require('broccoli');
 var emberCliConcat = require('../..'); // index.js
 var root = process.cwd();
 var builder, currentOptions;
+
+var assertFileExists = require('../helpers/assert-file-exists');
+var assertFileDoesNotExist = require('../helpers/assert-file-does-not-exist');
+
+var appCssPath = '/assets/dummy.css';
+var appJsPath = '/assets/dummy.js';
+var vendorCssPath = '/assets/vendor.css';
+var vendorJsPath = '/assets/vendor.js';
+
+var cssPaths = [appCssPath, vendorCssPath];
+var jsPaths = [appJsPath, vendorJsPath];
+
+var assetPaths = [appCssPath, appJsPath, vendorCssPath, vendorJsPath];
 
 function setOptions(options, environment) {
   options = options || {};
@@ -14,13 +26,13 @@ function setOptions(options, environment) {
     app: {
       html: 'index.html',
       css: {
-        'app': '/assets/dummy.css'
+        'app': appCssPath
       },
-      js: '/assets/dummy.js'
+      js: appJsPath
     },
     vendor: {
-      css: '/assets/vendor.css',
-      js: '/assets/vendor.js'
+      css: vendorCssPath,
+      js: vendorJsPath
     },
     testSupport: {
       css: '/assets/test-support.css',
@@ -43,12 +55,18 @@ function concatTree() {
   return emberCliConcat.postprocessTree('all', 'dist');
 }
 
-function buildWithOptions(options, environment) {
-  setOptions(options, environment);
+function buildWithOptions(concatOptions, environment) {
+  setOptions({
+    emberCliConcat: concatOptions
+  }, environment);
 
   builder = new broccoli.Builder(concatTree());
 
   return builder.build();
+}
+
+function getOutputPath(ext) {
+  return '/' + emberCliConcat.outputDir + '/' + emberCliConcat.outputFileName + '.' + ext;
 }
 
 describe('Acceptance - Concatenation', function() {
@@ -67,26 +85,33 @@ describe('Acceptance - Concatenation', function() {
   it('compiles the correct files with default options', function() {
     return buildWithOptions().then(function(results) {
       var directory = results.directory;
-      var outputPaths = currentOptions.outputPaths;
 
       /* Check each file in the default output paths exists */
 
-      for (var treeName in outputPaths) {
-        var assets = outputPaths[treeName];
+      assetPaths.forEach(function(path) {
+        assertFileExists(directory, path);
+      });
+    });
+  });
 
-        ['css', 'js'].forEach(function(extension) {
-         var paths = assets[extension];
-
-         if (typeof paths === 'string') {
-           assertFileExists(directory, paths);
-         } else {
-           for (var type in paths) {
-             assertFileExists(directory, paths[type]);
-           }
-         }
-        });
+  it('concats JavaScript', function() {
+    return buildWithOptions({
+      js: {
+        concat: true
       }
+    }).then(function(results) {
+      var directory = results.directory;
 
+      /* We're not overwriting so the originals should
+      all still exist */
+
+      assetPaths.forEach(function(path) {
+        assertFileExists(directory, path);
+      });
+
+      /* But so should the new app.js file */
+
+      assertFileExists(directory, getOutputPath('js'));
     });
   });
 });
