@@ -1,71 +1,77 @@
 var assertFileExists = require('../helpers/assert-file-exists');
-var ember = require('../helpers/ember');
 var tmp = require('tmp-sync');
 var path = require('path');
 var root = process.cwd();
 var tmproot = path.join(root, 'tmp');
-// var MockProject = require('ember-cli/tests/helpers/mock-project');
-var Project = require('ember-cli/lib/models/project');
+var emberCliConcat = require('../..'); // index.js
+var broccoli = require('broccoli');
+var ember = require('../helpers/ember');
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
-var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
-var MockUI        = require('../helpers/mock-ui');
-var App;
+var funnel = require('broccoli-funnel');
+var builder, tree;
+
+// var setHtmlTags = emberCliConcat.contentFor // function(contentForType)
+// var setOptions = emberCliConcat.included; // function(app)
+// var concatTree = emberCliConcat.postprocessTree; // function(type, tree)
+
+
+function setOptions(env, options) {
+  env = env || 'development';
+  options = options || {};
+
+  options.outputPaths = {
+    app: {
+      html: 'index.html',
+      css: {
+        'app': '/assets/dummy.css'
+      },
+      js: '/assets/dummy.js'
+    },
+    vendor: {
+      css: '/assets/vendor.css',
+      js: '/assets/vendor.js'
+    },
+    testSupport: {
+      css: '/assets/test-support.css',
+      js: {
+        testSupport: '/assets/test-support.js',
+        testLoader: '/assets/test-loader.js'
+      }
+    }
+  };
+
+  emberCliConcat.included({
+    env: env,
+    options: options
+  });
+}
+
+function concatTree(type, tree) {
+  return emberCliConcat.postprocessTree('all', 'dist');
+}
+
 
 describe('Acceptance - Concatenation', function() {
-  var tmpdir, project, projectPath;
-
   this.timeout(10000);
 
   beforeEach(function() {
-    tmpdir = tmp.in(tmproot);
-    process.chdir(tmpdir);
+    process.chdir(root);
   });
 
-  function initApp(options) {
-    var app = ember(['build'], options);
-
-    return app;
-  }
+  afterEach(function() {
+    if (builder) {
+      builder.cleanup();
+    }
+  });
 
   it('compiles the correct files with default options', function() {
-    var projectRoot = path.resolve(__dirname, '../fixtures')
-    var packageContents = require(path.join(projectRoot, 'package.json'));
-    var app = new EmberApp({
-      // name: 'dummy',
-      project: new Project(projectRoot, packageContents, new MockUI()),
-    });
+    setOptions();
+    tree = concatTree();
 
-    return initApp({
+    builder = new broccoli.Builder(tree);
 
-      /* These arguments are not affecting anything */
-
-      fingerprint: {
-        enabled: true,
-      },
-      emberCliConcat: {
-        js: {
-          concat: true,
-          preserveOriginal: false
-        }
-      }
-    }).then(function() {
-      var outputPaths = app.options.outputPaths;
-
-      for (var treeName in outputPaths) {
-        var assets = outputPaths[treeName];
-
-        ['css', 'js'].forEach(function(extension) {
-          var paths = assets[extension];
-
-          if (typeof paths === 'string') {
-            assertFileExists(paths);
-          } else {
-            for (var type in paths) {
-              assertFileExists(paths[type]);
-            }
-          }
-        });
-      }
+    return builder.build().then(function(results) {
+      console.log(results);
     });
   });
 });

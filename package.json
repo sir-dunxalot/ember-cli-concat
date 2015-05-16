@@ -27,6 +27,7 @@
     "broccoli-sourcemap-concat": "^0.4.1"
   },
   "devDependencies": {
+    "broccoli": "^0.16.2",
     "broccoli-asset-rev": "^2.0.2",
     "chai": "^2.1.0",
     "chai-fs": "git://github.com/sir-dunxalot/chai-fs.git#master",
