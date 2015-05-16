@@ -9,9 +9,9 @@ var builder, currentOptions;
 // var concatTree = emberCliConcat.postprocessTree; // function(type, tree)
 
 
-function setOptions(env, options) {
-  env = env || 'development';
+function setOptions(options, env) {
   options = options || {};
+  env = env || 'development';
 
   options.outputPaths = {
     app: {
@@ -42,10 +42,9 @@ function setOptions(env, options) {
   emberCliConcat.included(currentOptions);
 }
 
-function concatTree(type, tree) {
+function concatTree() {
   return emberCliConcat.postprocessTree('all', 'dist');
 }
-
 
 describe('Acceptance - Concatenation', function() {
   this.timeout(10000);
@@ -61,14 +60,69 @@ describe('Acceptance - Concatenation', function() {
   });
 
   it('compiles the correct files with default options', function() {
-    setOptions();
+    setOptions({
+      emberCliConcat: {
+        js: {
+          concat: true,
+          preserveOriginal: false
+        },
+        css: {
+          concat: true,
+          preserveOriginal: false
+        }
+      }
+    });
 
     builder = new broccoli.Builder(concatTree());
 
     return builder.build().then(function(results) {
       var directory = results.directory;
+      var outputPaths = currentOptions.outputPaths;
 
-      assertFileExists(directory, '/assets/dummy.css');
+      for (var treeName in outputPaths) {
+        var assets = outputPaths[treeName];
+
+        ['css', 'js'].forEach(function(extension) {
+         var paths = assets[extension];
+
+         if (typeof paths === 'string') {
+           assertFileExists(directory, paths);
+         } else {
+           for (var type in paths) {
+             assertFileExists(directory, paths[type]);
+           }
+         }
+        });
+      }
+
     });
   });
 });
+
+
+  // it('compiles the correct files with default options', function() {
+  //   setOptions({
+  //     emberCliConcat: {
+  //       js: {
+  //         concat: true,
+  //         preserveOriginal: false
+  //       },
+  //       css: {
+  //         concat: true,
+  //         preserveOriginal: false
+  //       }
+  //     }
+  //   });
+
+  //   console.log(emberCliConcat)
+
+  //   builder = new broccoli.Builder(concatTree());
+
+  //   return builder.build().then(function(results) {
+  //     var directory = results.directory;
+
+  //     // console.log(fs.readdirSync(directory + '/assets'));
+
+  //     assertFileExists(directory, '/assets/app.css');
+  //   });
+  // });
