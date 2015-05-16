@@ -3,8 +3,10 @@ var assert = chai.assert;
 
 chai.use(require('chai-fs'));
 
-module.exports = function(assetPath) {
-  var path = 'dist' + assetPath;
+module.exports = function(directory, assetPath, message) {
+  var path = directory + assetPath;
 
-  assert.isFile(path, path + ' should be a file');
+  message = message || assetPath + ' should be a file';
+
+  assert.isFile(path, message);
 }
