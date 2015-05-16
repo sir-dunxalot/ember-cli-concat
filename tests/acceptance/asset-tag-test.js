@@ -34,6 +34,7 @@ describe('Acceptance - Asset Tags', function() {
 
     paths.js.forEach(function(path) {
       assert.include(tags, path);
+      assert.include(tags, '<script src="');
     });
 
     /* Check CSS content-for tags */
@@ -42,6 +43,7 @@ describe('Acceptance - Asset Tags', function() {
 
     paths.css.forEach(function(path) {
       assert.include(tags, path);
+      assert.include(tags, '<link rel="stylesheet" ');
     });
   });
 
@@ -122,5 +124,24 @@ describe('Acceptance - Asset Tags', function() {
     tags = emberCliConcat.getAssetTagsAsString('css');
 
     assert.include(tags, getOutputPath('css'));
+  });
+
+  it('renders style tags with and without closing tags', function() {
+    var jsContentFor = defaultOptions.js.contentFor;
+    var tags;
+
+    emberCliConcat.resetDefaultOptions();
+
+    tags = emberCliConcat.getAssetTagsAsString('css');
+
+    assert.include(tags, '">');
+
+    emberCliConcat.setOptions({
+      useSelfClosingTags: true
+    });
+
+    tags = emberCliConcat.getAssetTagsAsString('css');
+
+    assert.include(tags, '" />');
   });
 });
