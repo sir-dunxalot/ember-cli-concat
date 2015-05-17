@@ -36,10 +36,10 @@ ember install
 ember s
 ```
 
-The test suite can be ran as follows:
+The test suite, which runs at the Broccoli level using Mocha and Chai, can be ran as follows:
 
 ```shell
-ember test
+npm test
 ```
 
 ## Inspirational Quotation
