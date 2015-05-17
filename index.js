@@ -119,7 +119,7 @@ module.exports = {
   @default true
   */
 
-  wrapScriptsInFunction: false,
+  wrapScriptsInFunction: false, // TODO - Deprecate
 
   _outputPaths: null,
 
@@ -146,7 +146,9 @@ module.exports = {
   */
 
   contentFor: function(contentForType) {
-    if (contentForType === this.js.contentFor) {
+    if (!this.enabled) {
+      return;
+    } else if (contentForType === this.js.contentFor) {
       return this.getTags('js');
     } else if (contentForType === this.css.contentFor) {
       return this.getTags('css');
@@ -183,7 +185,7 @@ module.exports = {
     }.bind(this);
 
     if (typeOptions.concat && !requireOriginalPaths) {
-      concatPath = this.outputDir + '/' + this.outputFileName;
+      concatPath = '/' + this.outputDir + '/' + this.outputFileName;
 
       addPath(concatPath + '.' + ext);
     } else {
@@ -262,6 +264,10 @@ module.exports = {
     var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
     var cssOptions = this.css;
     var jsOptions = this.js;
+
+    if (!this.enabled) {
+      return tree;
+    }
 
     var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 

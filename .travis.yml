@@ -21,5 +21,9 @@ install:
   - npm install
   - bower install
 
+# Build to dist so we can use it for the Broccoli tree
+# for tests, as if it was passed to the Ember addon
+
 script:
+  - ember build
   - npm test
