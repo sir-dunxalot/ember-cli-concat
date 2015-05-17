@@ -15,7 +15,6 @@ var assertFileHasContent = require('../helpers/assert/file-has-content');
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Concatenation', function() {
-  this.timeout(10000);
 
   beforeEach(function() {
     process.chdir(root);
@@ -117,7 +116,7 @@ describe('Acceptance - Concatenation', function() {
       assertFileExists(directory, getOutputPath('map', 'dummy'));
       assertFileExists(directory, getOutputPath('map', 'vendor'));
 
-       But so should the new app.css file 
+      /* But so should the new app.css file */
 
       assertFileExists(directory, getOutputPath('css'));
       assertFileDoesNotExist(directory, getOutputPath('map'));

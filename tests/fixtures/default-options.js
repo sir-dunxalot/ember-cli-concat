@@ -1,3 +1,8 @@
+/**
+The default addon options. Used to reset options to their
+original state between tests or before builds.
+*/
+
 module.exports = {
   js: {
     concat: false,

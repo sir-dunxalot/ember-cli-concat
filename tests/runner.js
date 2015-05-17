@@ -8,7 +8,7 @@ if (process.env.EOLNEWLINE) {
 }
 
 var mocha = new Mocha({
-  timeout: 5000,
+  timeout: 10000,
   reporter: 'spec'
 });
 
