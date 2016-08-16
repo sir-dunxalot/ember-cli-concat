@@ -1,13 +1,9 @@
 var chai = require('chai');
 var emberCliConcat = require('../helpers/ember-cli-concat');
-var defaultOptions = require('../fixtures/default-options');
-var paths = require('../fixtures/paths');
-var root = process.cwd();
 
 /* Test helpers */
 
 var assert = chai.assert;
-var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Helper Functions', function() {
 

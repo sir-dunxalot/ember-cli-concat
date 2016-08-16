@@ -15,4 +15,4 @@ module.exports = function(directory, assetPath, content) {
   var data = fs.readFileSync(path, 'utf8');
 
   return data.indexOf(content);
-}
+};

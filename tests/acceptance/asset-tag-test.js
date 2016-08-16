@@ -1,8 +1,6 @@
 var chai = require('chai');
-var defaultOptions = require('../fixtures/default-options');
 var emberCliConcat = require('../helpers/ember-cli-concat');
 var paths = require('../fixtures/paths');
-var root = process.cwd();
 
 /* Test helpers */
 
@@ -12,7 +10,6 @@ var getOutputPath = emberCliConcat.getOutputPath;
 describe('Acceptance - Asset Tags', function() {
 
   it('renders all asset tags', function() {
-    var jsContentFor = defaultOptions.js.contentFor;
     var tags;
 
     emberCliConcat.resetDefaultOptions();
@@ -41,7 +38,6 @@ describe('Acceptance - Asset Tags', function() {
   });
 
   it('renders asset tags with JS concatenation', function() {
-    var jsContentFor = defaultOptions.js.contentFor;
     var tags;
 
     emberCliConcat.resetDefaultOptions();
@@ -67,7 +63,6 @@ describe('Acceptance - Asset Tags', function() {
   });
 
   it('renders asset tags with CSS concatenation', function() {
-    var jsContentFor = defaultOptions.js.contentFor;
     var tags;
 
     emberCliConcat.resetDefaultOptions();
@@ -93,7 +88,6 @@ describe('Acceptance - Asset Tags', function() {
   });
 
   it('renders asset tags with JS and CSS concatenation', function() {
-    var jsContentFor = defaultOptions.js.contentFor;
     var tags;
 
     emberCliConcat.resetDefaultOptions();
@@ -120,7 +114,6 @@ describe('Acceptance - Asset Tags', function() {
   });
 
   it('renders asset tags with JS and CSS concatenation with custom content-for hooks', function() {
-    var jsContentFor = defaultOptions.js.contentFor;
     var tags;
 
     emberCliConcat.resetDefaultOptions();
@@ -149,7 +142,6 @@ describe('Acceptance - Asset Tags', function() {
   });
 
   it('renders style tags with and without closing tags', function() {
-    var jsContentFor = defaultOptions.js.contentFor;
     var tags;
 
     emberCliConcat.resetDefaultOptions();

@@ -13,4 +13,4 @@ module.exports = function(directory, assetPath, message) {
   message = message || 'File should not exist';
 
   chai.assert.notPathExists(path, message);
-}
+};

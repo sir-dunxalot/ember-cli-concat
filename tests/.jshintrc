@@ -23,10 +23,11 @@
     "currentPath",
     "currentRouteName"
   ],
-  "node": false,
+  "mocha": true,
+  "node": true,
   "browser": false,
   "boss": true,
-  "curly": false,
+  "curly": true,
   "debug": false,
   "devel": false,
   "eqeqeq": true,
@@ -47,5 +48,6 @@
   "strict": false,
   "white": false,
   "eqnull": true,
-  "esnext": true
+  "esversion": 6,
+  "unused": true
 }
