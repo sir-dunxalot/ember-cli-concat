@@ -1,6 +1,5 @@
 var chai = require('chai');
 var emberCliConcat = require('../helpers/ember-cli-concat');
-var defaultOptions = require('../fixtures/default-options');
 var getContentPosition = require('../helpers/get-content-position');
 var paths = require('../fixtures/paths');
 var root = process.cwd();

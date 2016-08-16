@@ -13,4 +13,4 @@ module.exports = function(directory, assetPath, message) {
   message = message || 'File should exist';
 
   chai.assert.isFile(path, message);
-}
+};

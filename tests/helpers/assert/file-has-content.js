@@ -13,4 +13,4 @@ module.exports = function(directory, assetPath, message) {
   message = message || assetPath + ' should not be empty';
 
   chai.assert.notIsEmptyFile(path, message);
-}
+};

@@ -9,4 +9,4 @@ Not currently used in tests, but useful for debugging.
 
 module.exports = function(directory) {
   return fs.readdirSync(directory);
-}
+};

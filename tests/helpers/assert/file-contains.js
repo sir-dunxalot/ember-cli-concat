@@ -14,4 +14,4 @@ module.exports = function(directory, assetPath, content, message) {
   message = message || 'File should contain specified content';
 
   chai.assert.fileContentMatch(path, regex, message);
-}
+};

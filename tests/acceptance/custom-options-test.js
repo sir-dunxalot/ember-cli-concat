@@ -1,7 +1,6 @@
 var chai = require('chai');
 var defaultOptions = require('../fixtures/default-options');
 var emberCliConcat = require('../helpers/ember-cli-concat');
-var paths = require('../fixtures/paths');
 var root = process.cwd();
 
 /* Test helpers */
@@ -89,7 +88,7 @@ describe('Acceptance - Custom Options', function() {
       assertFileExists(directory, jsPath);
       assertFileDoesNotExist(directory, defaultOptions._outputPath + 'js');
 
-      assertFileExists(directory, getOutputPath('map'));      
+      assertFileExists(directory, getOutputPath('map'));
     });
   });
 });
