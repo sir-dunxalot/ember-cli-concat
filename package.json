@@ -24,7 +24,7 @@
   "devDependencies": {
     "broccoli": "^0.16.9",
     "broccoli-asset-rev": "^2.4.2",
-    "chai": "^2.1.0",
+    "chai": "^3.5.0",
     "chai-fs": "^0.1.0",
     "ember-cli": "2.7.0",
     "ember-cli-app-version": "^1.0.0",
@@ -41,10 +41,10 @@
     "ember-export-application-global": "^1.0.5",
     "ember-load-initializers": "^0.5.1",
     "ember-resolver": "^2.0.3",
-    "glob": "^5.0.5",
+    "glob": "^7.0.5",
     "loader.js": "^4.0.1",
-    "lodash": "^3.8.0",
-    "mocha": "^2.2.4",
+    "lodash": "^4.15.0",
+    "mocha": "^3.0.2",
     "mocha-jshint": "^2.2.3",
     "through": "^2.3.7",
     "tmp-sync": "^1.0.1"
