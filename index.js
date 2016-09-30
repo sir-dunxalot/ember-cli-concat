@@ -51,6 +51,21 @@ module.exports = {
   },
 
   /**
+   Allows to specify tree types which would be used for
+   concatenation. Defaults to empty array which would
+   concatenate all recieved by addon postprocessTree hook.
+   To concatenate only the whole app after all its assets
+   have already been processed by the Ember build pipeline
+   set this property to ['all']
+
+   @property treeTypes
+   @type Array
+   @default []
+   */
+
+  treeTypes: [],
+
+  /**
   Disables concatenation of files. Useful for debugging purposes.
 
   @property enabled
@@ -261,73 +276,77 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
-    var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
-    var cssOptions = this.css;
-    var jsOptions = this.js;
+    if (this.treeTypes.indexOf(type) != -1 || this.treeTypes.length === 0) {
+      var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
+      var cssOptions = this.css;
+      var jsOptions = this.js;
 
-    if (!this.enabled) {
+      if (!this.enabled) {
+        return tree;
+      }
+
+      var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
+
+      removeFromTree = function(inputFiles) {
+        tree = fileRemover(tree, {
+          files: inputFiles
+        });
+      };
+
+      /* Locate all script files and concatenate into one file */
+
+      if (jsOptions.concat) {
+        scriptInputPaths = this.filterAndCleanPaths('js', true);
+
+        concatenatedScripts = concatAndMap(tree, {
+          allowNone: true,
+          inputFiles: scriptInputPaths,
+          outputFile: outputPath + '.js',
+          footer: jsOptions.footer,
+          header: jsOptions.header,
+          wrapInFunction: this.wrapScriptsInFunction
+        });
+
+        if (!jsOptions.preserveOriginal) {
+          removeFromTree(scriptInputPaths);
+        }
+      }
+
+      /* Locate all style files and concatenate into one file */
+
+      if (cssOptions.concat) {
+        styleInputPaths = this.filterAndCleanPaths('css', true);
+
+        concatenatedStyles = concatAndMap(tree, {
+          allowNone: true,
+          footer: cssOptions.footer,
+          header: cssOptions.header,
+          inputFiles: styleInputPaths,
+          outputFile: outputPath + '.css',
+          wrapInFunction: false
+        });
+
+        if (!cssOptions.preserveOriginal) {
+          removeFromTree(styleInputPaths);
+        }
+      }
+
+      /* Combine all the files into the project's tree */
+
+      trees = [tree, concatenatedScripts, concatenatedStyles];
+
+      /* Remove empty values and add the remaining to the
+       working tree */
+
+      workingTree = mergeTrees(trees.filter(function(e) { return e; }), {
+        overwrite: true
+      });
+
+      /* Remove the unnecessary script and style files */
+
+      return workingTree;
+    } else {
       return tree;
     }
-
-    var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
-
-    removeFromTree = function(inputFiles) {
-      tree = fileRemover(tree, {
-        files: inputFiles
-      });
-    };
-
-    /* Locate all script files and concatenate into one file */
-
-    if (jsOptions.concat) {
-      scriptInputPaths = this.filterAndCleanPaths('js', true);
-
-      concatenatedScripts = concatAndMap(tree, {
-        allowNone: true,
-        inputFiles: scriptInputPaths,
-        outputFile: outputPath + '.js',
-        footer: jsOptions.footer,
-        header: jsOptions.header,
-        wrapInFunction: this.wrapScriptsInFunction
-      });
-
-      if (!jsOptions.preserveOriginal) {
-        removeFromTree(scriptInputPaths);
-      }
-    }
-
-    /* Locate all style files and concatenate into one file */
-
-    if (cssOptions.concat) {
-      styleInputPaths = this.filterAndCleanPaths('css', true);
-
-      concatenatedStyles = concatAndMap(tree, {
-        allowNone: true,
-        footer: cssOptions.footer,
-        header: cssOptions.header,
-        inputFiles: styleInputPaths,
-        outputFile: outputPath + '.css',
-        wrapInFunction: false
-      });
-
-      if (!cssOptions.preserveOriginal) {
-        removeFromTree(styleInputPaths);
-      }
-    }
-
-    /* Combine all the files into the project's tree */
-
-    trees = [tree, concatenatedScripts, concatenatedStyles];
-
-    /* Remove empty values and add the remaining to the
-    working tree */
-
-    workingTree = mergeTrees(trees.filter(function(e) { return e; }), {
-      overwrite: true
-    });
-
-    /* Remove the unnecessary script and style files */
-
-    return workingTree;
   }
 };
