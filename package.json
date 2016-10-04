@@ -25,7 +25,7 @@
     "broccoli": "^0.16.9",
     "broccoli-asset-rev": "^2.4.2",
     "chai": "^2.1.0",
-    "chai-fs": "^0.1.0",
+    "chai-fs": "git://github.com/sir-dunxalot/chai-fs.git#master",
     "ember-cli": "2.7.0",
     "ember-cli-app-version": "^1.0.0",
     "ember-cli-dependency-checker": "^1.2.0",
