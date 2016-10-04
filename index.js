@@ -60,10 +60,10 @@ module.exports = {
 
    @property treeTypes
    @type Array
-   @default []
+   @default ['all']
    */
 
-  treeTypes: [],
+  treeTypes: ['all'],
 
   /**
   Disables concatenation of files. Useful for debugging purposes.
