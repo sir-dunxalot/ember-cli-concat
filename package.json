@@ -66,6 +66,9 @@
   ],
   "ember-addon": {
     "before": "broccoli-asset-rev",
-    "configPath": "tests/dummy/config"
+    "configPath": "tests/dummy/config",
+    "after": [
+      "ember-component-css"
+    ]
   }
 }
