@@ -65,10 +65,7 @@
     "scripts"
   ],
   "ember-addon": {
-    "before": [
-      "broccoli-asset-rev",
-      "ember-cli-inline-content"
-    ],
+    "before": "broccoli-asset-rev",
     "configPath": "tests/dummy/config",
     "after": [
       "ember-component-css"
