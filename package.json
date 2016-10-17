@@ -68,7 +68,8 @@
     "before": "broccoli-asset-rev",
     "configPath": "tests/dummy/config",
     "after": [
-      "ember-component-css"
+      "ember-component-css",
+      "ember-sprite"
     ]
   }
 }
