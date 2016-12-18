@@ -162,12 +162,22 @@ module.exports = {
 
   contentFor: function(contentForType) {
     if (this.enabled) {
+      var ext, concat;
       if (contentForType === this.js.contentFor) {
-        return [this.appPath('js')];
+        ext = 'js';
+        concat = this.js.concat;
       } else if (contentForType === this.css.contentFor) {
-        return [this.appPath('css')];
+        ext = 'css';
+        concat = this.css.concat;
+      } else {
+        return undefined;
       }
+      return concat ? [this.outputAppPath(ext)] : [this.appPath(ext), this.vendorPath(ext)];
     }
+  },
+
+  outputAppPath(ext) {
+    return this.getAssetTag(ext, "/" + this.outputDir + "/" + this.outputFileName + "." + ext);
   },
 
   appPath(ext, relPath) {
@@ -185,8 +195,14 @@ module.exports = {
 
   },
 
-  vendorPath(ext) {
-    return this.cleanPath(this._outputPaths['vendor'][ext]);
+  vendorPath(ext, relPath) {
+    var path = this._outputPaths['vendor'][ext];
+    if (relPath) {
+      return this.cleanPath(path);
+    } else {
+      return this.getAssetTag(ext, path);
+    }
+
   },
 
   getAssetTag: function(ext, path) {
@@ -256,26 +272,27 @@ module.exports = {
 
       if (jsOptions.concat) {
         scriptInputPaths = [this.appPath('js', true)];
+        var headerFiles = [this.vendorPath('js', true)];
 
         concatenatedScripts = concatAndMap(tree, {
           allowNone: true,
           inputFiles: scriptInputPaths,
           outputFile: outputPath + '.js',
-          headerFiles: [this.vendorPath('js')],
+          headerFiles: headerFiles,
           footer: jsOptions.footer,
           header: jsOptions.header,
           wrapInFunction: this.wrapScriptsInFunction
         });
 
         if (!jsOptions.preserveOriginal) {
-          removeFromTree(scriptInputPaths);
+          removeFromTree(scriptInputPaths.concat(headerFiles));
         }
       }
 
       /* Locate all style files and concatenate into one file */
 
       if (cssOptions.concat) {
-        styleInputPaths = [this.appPath('css', true), this.vendorPath('css')];
+        styleInputPaths = [this.appPath('css', true), this.vendorPath('css', true)];
 
         concatenatedStyles = concatAndMap(tree, {
           allowNone: true,
