@@ -176,11 +176,11 @@ module.exports = {
     }
   },
 
-  outputAppPath(ext) {
+  outputAppPath: function(ext) {
     return this.getAssetTag(ext, "/" + this.outputDir + "/" + this.outputFileName + "." + ext);
   },
 
-  appPath(ext, relPath) {
+  appPath: function(ext, relPath) {
     var path;
     if (ext === 'css') {
       path = this._outputPaths['app'][ext]['app'];
@@ -195,7 +195,7 @@ module.exports = {
 
   },
 
-  vendorPath(ext, relPath) {
+  vendorPath: function(ext, relPath) {
     var path = this._outputPaths['vendor'][ext];
     if (relPath) {
       return this.cleanPath(path);
