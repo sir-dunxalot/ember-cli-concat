@@ -55,7 +55,7 @@ describe('Acceptance - Custom Options', function() {
     });
   });
 
-  it('can place concatinated files at a custom path', function() {
+  it('can place concatenated files at a custom path', function() {
     var outputDir = 'ice';
     var outputFileName = 'cream';
 

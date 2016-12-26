@@ -3,7 +3,7 @@
 
 /* Dependencies */
 
-var concatAndMap = require('broccoli-sourcemap-concat');
+var concatAndMap = require('broccoli-concat');
 var fileRemover = require('broccoli-file-remover');
 var mergeTrees = require('broccoli-merge-trees');
 
@@ -16,18 +16,18 @@ Example usage:
 var path = defaultFor(path, 'assets/app.js');
 ```
 
-@method defaultFor
-@param {all} The variable you want to use the value of but need a fallback
-@param {all} The default value to use in cases where the value of `variable` is not defined
-*/
-
+ * @method defaultFor
+ * @param variable {all} The variable you want to use the value of but need a fallback
+ * @param defaultValue {all} The default value to use in cases where the value of `variable` is not defined
+ * @returns {all}
+ */
 var defaultFor = function(variable, defaultValue) {
   if (typeof variable !== 'undefined' && variable !== null) {
     return variable;
   } else {
     return defaultValue;
   }
-}
+};
 
 /* The main event woop woop */
 
@@ -145,7 +145,7 @@ module.exports = {
   ```
 
   @method cleanPath
-  @param {String} The path to clean up
+  @param path {String} The path to clean up
   */
 
   cleanPath: function(path) {
@@ -157,69 +157,52 @@ module.exports = {
   The contentFor hook is run once for each `content-for` in our application. `head` and `body`, which are the two we hook onto, are standard to Ember CLI builds and are found in the app's main HTML filem which is `app/index.html` by default.
 
   @method contentFor
-  @param {String} type The type of content-for this is being run for (e.g. head, body, etc)
+  @param contentForType {String} type The type of content-for this is being run for (e.g. head, body, etc)
   */
 
   contentFor: function(contentForType) {
-    if (!this.enabled) {
-      return;
-    } else if (contentForType === this.js.contentFor) {
-      return this.getTags('js');
-    } else if (contentForType === this.css.contentFor) {
-      return this.getTags('css');
-    } else {
-      return;
-    }
-  },
-
-  filterAndCleanPaths: function(ext, requireOriginalPaths) {
-    return this.filterPaths(ext, requireOriginalPaths).map(function(path) {
-      return this.cleanPath(path);
-    }.bind(this));
-  },
-
-  filterPaths: function(ext, requireOriginalPaths) {
-    var outputPaths = this._outputPaths;
-    var filteredPaths = [];
-    var typeOptions = this[ext];
-    var addPath, concatPath;
-
-    requireOriginalPaths = defaultFor(requireOriginalPaths, false);
-
-    /* Build array in custom order so each tag is
-    in the correct order */
-
-    addPath = function(path) {
-      /* Don't include test assest in concatination */
-
-      if (path.indexOf('test') > -1) {
-        return;
+    if (this.enabled) {
+      var ext, concat;
+      if (contentForType === this.js.contentFor) {
+        ext = 'js';
+        concat = this.js.concat;
+      } else if (contentForType === this.css.contentFor) {
+        ext = 'css';
+        concat = this.css.concat;
       } else {
-        filteredPaths.unshift(path);
+        return undefined;
       }
-    }.bind(this);
+      return concat ? [this.outputAppPath(ext)] : [this.appPath(ext), this.vendorPath(ext)];
+    }
+  },
 
-    if (typeOptions.concat && !requireOriginalPaths) {
-      concatPath = '/' + this.outputDir + '/' + this.outputFileName;
+  outputAppPath: function(ext) {
+    return this.getAssetTag(ext, "/" + this.outputDir + "/" + this.outputFileName + "." + ext);
+  },
 
-      addPath(concatPath + '.' + ext);
+  appPath: function(ext, relPath) {
+    var path;
+    if (ext === 'css') {
+      path = this._outputPaths['app'][ext]['app'];
     } else {
-      for (var treeName in outputPaths) {
-        var assets = outputPaths[treeName];
-        var paths = assets[ext];
-        var path;
-
-        if (typeof paths === 'string') {
-          addPath(paths);
-        } else {
-          for (var type in paths) {
-            addPath(paths[type]);
-          }
-        }
-      }
+      path = this._outputPaths['app'][ext];
+    }
+    if (relPath) {
+      return this.cleanPath(path);
+    } else {
+      return this.getAssetTag(ext, path);
     }
 
-    return filteredPaths;
+  },
+
+  vendorPath: function(ext, relPath) {
+    var path = this._outputPaths['vendor'][ext];
+    if (relPath) {
+      return this.cleanPath(path);
+    } else {
+      return this.getAssetTag(ext, path);
+    }
+
   },
 
   getAssetTag: function(ext, path) {
@@ -234,12 +217,6 @@ module.exports = {
     }
   },
 
-  getTags: function(ext) {
-    return this.filterPaths(ext).map(function(path) {
-      return this.getAssetTag(ext, path);
-    }.bind(this));
-  },
-
   /**
   Overrides this addon's default options with any specified by the developer and determines whether or not to concatenate files based on the environment. Please note, there is a fallback check for detecting test environments in the contentFor hook.
   The included hook is run once during the build process of the addon.
@@ -249,7 +226,6 @@ module.exports = {
   */
 
   included: function(app) {
-    var environment = app.env.toString();
     var options = defaultFor(app.options.emberCliConcat, {});
 
     this._outputPaths = app.options.outputPaths;
@@ -276,14 +252,13 @@ module.exports = {
   */
 
   postprocessTree: function(type, tree) {
-    if (this.treeTypes.indexOf(type) != -1 || this.treeTypes.length === 0) {
+    if ((this.treeTypes.indexOf(type) !== -1 ||
+      this.treeTypes.length === 0) &&
+      this.enabled
+    ) {
       var outputPath = '/' + this.cleanPath(this.outputDir) + '/' + this.outputFileName;
       var cssOptions = this.css;
       var jsOptions = this.js;
-
-      if (!this.enabled) {
-        return tree;
-      }
 
       var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 
@@ -296,26 +271,28 @@ module.exports = {
       /* Locate all script files and concatenate into one file */
 
       if (jsOptions.concat) {
-        scriptInputPaths = this.filterAndCleanPaths('js', true);
+        scriptInputPaths = [this.appPath('js', true)];
+        var headerFiles = [this.vendorPath('js', true)];
 
         concatenatedScripts = concatAndMap(tree, {
           allowNone: true,
           inputFiles: scriptInputPaths,
           outputFile: outputPath + '.js',
+          headerFiles: headerFiles,
           footer: jsOptions.footer,
           header: jsOptions.header,
           wrapInFunction: this.wrapScriptsInFunction
         });
 
         if (!jsOptions.preserveOriginal) {
-          removeFromTree(scriptInputPaths);
+          removeFromTree(scriptInputPaths.concat(headerFiles));
         }
       }
 
       /* Locate all style files and concatenate into one file */
 
       if (cssOptions.concat) {
-        styleInputPaths = this.filterAndCleanPaths('css', true);
+        styleInputPaths = [this.appPath('css', true), this.vendorPath('css', true)];
 
         concatenatedStyles = concatAndMap(tree, {
           allowNone: true,
