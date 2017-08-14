@@ -172,7 +172,7 @@ module.exports = {
       } else {
         return undefined;
       }
-      return concat ? [this.outputAppPath(ext)] : [this.appPath(ext), this.vendorPath(ext)];
+      return concat ? [this.outputAppPath(ext)] : [this.vendorPath(ext), this.appPath(ext)];
     }
   },
 
