@@ -39,7 +39,8 @@ module.exports = {
     contentFor: 'concat-js',
     footer: null,
     header: null,
-    preserveOriginal: true
+    preserveOriginal: true,
+    useAsync: false
   },
 
   css: {
@@ -209,6 +210,9 @@ module.exports = {
     var closing;
 
     if (ext === 'js') {
+      if (this.js.useAsync) {
+        return '<script async src="' + path + '"></script>\n';
+      }
       return '<script src="' + path + '"></script>\n';
     } else {
       closing = this.useSelfClosingTags ? ' /' : '';
