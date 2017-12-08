@@ -296,7 +296,8 @@ module.exports = {
       /* Locate all style files and concatenate into one file */
 
       if (cssOptions.concat) {
-        styleInputPaths = [this.appPath('css', true), this.vendorPath('css', true)];
+        styleInputPaths = [this.appPath('css', true)];
+        var cssHeaderFiles = [this.vendorPath('css', true)];
 
         concatenatedStyles = concatAndMap(tree, {
           allowNone: true,
@@ -304,11 +305,12 @@ module.exports = {
           header: cssOptions.header,
           inputFiles: styleInputPaths,
           outputFile: outputPath + '.css',
+          headerFiles: cssHeaderFiles,
           wrapInFunction: false
         });
 
         if (!cssOptions.preserveOriginal) {
-          removeFromTree(styleInputPaths);
+          removeFromTree(styleInputPaths.concat(cssHeaderFiles));
         }
       }
 
