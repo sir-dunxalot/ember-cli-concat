@@ -210,7 +210,8 @@ module.exports = {
     var closing;
 
     if (ext === 'js') {
-      if (this.js.useAsync) {
+      // In development the vendor.js file can not use async.
+      if (this.js.useAsync && path !== '/assets/vendor.js') {
         return '<script async src="' + path + '"></script>\n';
       }
       return '<script src="' + path + '"></script>\n';
