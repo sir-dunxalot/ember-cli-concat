@@ -1,4 +1,5 @@
 var chai = require('chai');
+chai.use(require('chai-fs'));
 
 /**
 Assert a file does exist at a specified path using

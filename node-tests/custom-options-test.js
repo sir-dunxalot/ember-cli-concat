@@ -1,14 +1,14 @@
 var chai = require('chai');
-var defaultOptions = require('../fixtures/default-options');
-var emberCliConcat = require('../helpers/ember-cli-concat');
+var defaultOptions = require('./fixtures/default-options');
+var emberCliConcat = require('./ember-cli-concat');
 var root = process.cwd();
 
 /* Test helpers */
 
 var assert = chai.assert;
-var assertFileContains = require('../helpers/assert/file-contains');
-var assertFileExists = require('../helpers/assert/file-exists');
-var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
+var assertFileContains = require('./assert/file-contains');
+var assertFileExists = require('./assert/file-exists');
+var assertFileDoesNotExist = require('./assert/file-does-not-exist');
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Custom Options', function() {

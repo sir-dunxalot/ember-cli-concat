@@ -1,6 +1,6 @@
 var chai = require('chai');
-var emberCliConcat = require('../helpers/ember-cli-concat');
-var paths = require('../fixtures/paths');
+var emberCliConcat = require('./ember-cli-concat');
+var paths = require('./fixtures/paths');
 
 /* Test helpers */
 
