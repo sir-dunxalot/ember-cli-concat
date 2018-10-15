@@ -44,8 +44,7 @@
     "loader.js": "^4.0.1",
     "lodash": "^3.8.0",
     "mocha": "^3.0.2",
-    "through": "^2.3.7",
-    "tmp-sync": "^1.0.1"
+    "through": "^2.3.7"
   },
   "dependencies": {
     "broccoli-concat": "^3.7.3",
