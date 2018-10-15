@@ -1,7 +1,7 @@
 var broccoli = require('broccoli');
-var defaultOptions = require('../fixtures/default-options');
-var emberCliConcat = require('../..'); // index.js
-var paths = require('../fixtures/paths');
+var defaultOptions = require('./fixtures/default-options');
+var emberCliConcat = require('../index'); // index.js
+var paths = require('./fixtures/paths');
 
 /**
 Test-friendly helpers that wrapp the addon's index.js

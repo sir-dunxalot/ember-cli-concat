@@ -1,5 +1,5 @@
 var chai = require('chai');
-var emberCliConcat = require('../helpers/ember-cli-concat');
+var emberCliConcat = require('./ember-cli-concat');
 
 /* Test helpers */
 

@@ -1,16 +1,16 @@
 var chai = require('chai');
-var emberCliConcat = require('../helpers/ember-cli-concat');
-var getContentPosition = require('../helpers/get-content-position');
-var paths = require('../fixtures/paths');
+var emberCliConcat = require('./ember-cli-concat');
+var getContentPosition = require('./get-content-position');
+var paths = require('./fixtures/paths');
 var root = process.cwd();
 
 /* Test helpers */
 
 var assert = chai.assert;
-var assertFileContains = require('../helpers/assert/file-contains');
-var assertFileExists = require('../helpers/assert/file-exists');
-var assertFileDoesNotExist = require('../helpers/assert/file-does-not-exist');
-var assertFileHasContent = require('../helpers/assert/file-has-content');
+var assertFileContains = require('./assert/file-contains');
+var assertFileExists = require('./assert/file-exists');
+var assertFileDoesNotExist = require('./assert/file-does-not-exist');
+var assertFileHasContent = require('./assert/file-has-content');
 var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Concatenation', function() {
