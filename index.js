@@ -4,7 +4,7 @@
 /* Dependencies */
 
 var concatAndMap = require('broccoli-concat');
-var fileRemover = require('broccoli-file-remover');
+var Funnel = require('broccoli-funnel');
 var mergeTrees = require('broccoli-merge-trees');
 
 /* Helper Functions */
@@ -267,8 +267,8 @@ module.exports = {
       var concatenatedScripts, concatenatedStyles, removeFromTree, scriptInputPaths, styleInputPaths, trees, workingTree;
 
       removeFromTree = function(inputFiles) {
-        tree = fileRemover(tree, {
-          files: inputFiles
+        tree = new Funnel(tree, {
+          exclude: inputFiles
         });
       };
 
