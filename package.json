@@ -23,7 +23,6 @@
   "license": "MIT",
   "devDependencies": {
     "broccoli": "^0.16.9",
-    "broccoli-asset-rev": "^2.4.2",
     "chai": "^2.1.0",
     "chai-fs": "git://github.com/sir-dunxalot/chai-fs.git#master",
     "ember-cli": "^2.4.0",
