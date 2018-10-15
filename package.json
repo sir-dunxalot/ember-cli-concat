@@ -11,15 +11,15 @@
     "scripts",
     "vendor"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sir-dunxalot/ember-cli-concat.git"
+  },
   "license": "MIT",
   "author": "",
   "directories": {
     "doc": "doc",
     "test": "tests"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/sir-dunxalot/ember-cli-concat.git"
   },
   "scripts": {
     "build": "ember build",

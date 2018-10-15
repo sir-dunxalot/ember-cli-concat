@@ -1,27 +1,29 @@
 ---
 language: node_js
 node_js:
+  # we recommend testing addons with the same minimum supported node version as Ember CLI
+  # so that your addon works for all apps
   - "6"
 
 sudo: false
+dist: trusty
 
-git:
-  submodules: false
+addons:
+  chrome: stable
 
-cache: yarn
+cache:
+  yarn: true
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH=$HOME/.yarn/bin:$PATH
-  - yarn global add bower
 
 install:
-  - yarn install
-  - bower install
+  - yarn install --no-lockfile --non-interactive
 
 # Build to dist so we can use it for the Broccoli tree
 # for tests, as if it was passed to the Ember addon
 
 script:
   - ember build
-  - npm test
+  - yarn test

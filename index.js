@@ -1,4 +1,3 @@
-/* jshint node: true */
 'use strict';
 
 /* Dependencies */
@@ -32,7 +31,7 @@ var defaultFor = function(variable, defaultValue) {
 /* The main event woop woop */
 
 module.exports = {
-  name: 'ember-cli-concat',
+  name: require('./package').name,
 
   js: {
     concat: false,
