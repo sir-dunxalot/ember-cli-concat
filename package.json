@@ -51,7 +51,7 @@
     "tmp-sync": "^1.0.1"
   },
   "dependencies": {
-    "broccoli-concat": "^3.0.4",
+    "broccoli-concat": "^3.7.3",
     "broccoli-file-remover": "^0.3.1",
     "broccoli-merge-trees": "^3.0.1"
   },
