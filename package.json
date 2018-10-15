@@ -27,7 +27,6 @@
     "chai": "^2.1.0",
     "chai-fs": "git://github.com/sir-dunxalot/chai-fs.git#master",
     "ember-cli": "^2.4.0",
-    "ember-cli-app-version": "^1.0.0",
     "ember-cli-babel": "^5.1.6",
     "ember-cli-dependency-checker": "^1.2.0",
     "ember-cli-htmlbars": "^1.0.3",
