@@ -42,7 +42,6 @@
     "ember-resolver": "^2.0.3",
     "glob": "^7.0.5",
     "loader.js": "^4.0.1",
-    "lodash": "^3.8.0",
     "mocha": "^3.0.2"
   },
   "dependencies": {
