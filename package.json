@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "broccoli-concat": "^3.7.3",
-    "broccoli-file-remover": "^0.3.1",
+    "broccoli-funnel": "^2.0.1",
     "broccoli-merge-trees": "^3.0.1"
   },
   "keywords": [
