@@ -1,4 +1,5 @@
 var chai = require('chai');
+chai.use(require('chai-fs'));
 
 /**
 Assert whether a file contains particular content
