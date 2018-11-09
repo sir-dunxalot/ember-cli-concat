@@ -1,9 +1,9 @@
-/*jshint node:true*/
-/* global require, module */
-var EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
-var environment = process.env.EMBER_ENV;
+'use strict';
 
-var options = {
+const EmberAddon = require('ember-cli/lib/broccoli/ember-addon');
+const environment = process.env.EMBER_ENV;
+
+const options = {
   storeConfigInMeta: false,
   fingerprint: {
     enabled: false,
@@ -25,7 +25,7 @@ if (environment === 'production') {
 }
 
 module.exports = function(defaults) {
-  var app = new EmberAddon(defaults, options);
+  let app = new EmberAddon(defaults, options);
 
   /*
     This build file specifies the options for the dummy test app of this
