@@ -1,12 +1,10 @@
-# Ember-cli-concat 
+# Ember-cli-concat
 [![Build Status](https://travis-ci.org/sir-dunxalot/ember-cli-concat.svg?branch=develop)](https://travis-ci.org/sir-dunxalot/ember-cli-concat)
 [![npm version](https://badge.fury.io/js/ember-cli-concat.svg)](http://badge.fury.io/js/ember-cli-concat)
 [![npm](https://img.shields.io/npm/dm/ember-cli-concat.svg)]()
 [![Ember Observer Score](https://emberobserver.com/badges/ember-cli-concat.svg)](https://emberobserver.com/addons/ember-cli-concat)
 
-
 Ember CLI Concat is an Ember addon that can concatinate Ember CLI's app and vendor files into a single JS file and a single CSS file in a specified environment. In other words, less HTTP requests and a faster page load speed!
-
 
 ## Contents
 
@@ -43,9 +41,13 @@ ember s
 The test suite, which runs at the Broccoli level using Mocha and Chai, can be ran as follows:
 
 ```shell
-npm test
+# First build the app
+yarn build
+
+# Then run the tests...
+yarn lint
+yarn test:node
+
+# Or run both linting and node tests:
+yarn test
 ```
-
-## Inspirational Quotation
-
-"Drink beer and party" - Steve Jobs

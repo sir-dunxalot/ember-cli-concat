@@ -4,7 +4,7 @@ var emberCliConcat = require('../index'); // index.js
 var paths = require('./fixtures/paths');
 
 /**
-Test-friendly helpers that wrapp the addon's index.js
+Test-friendly helpers that wrap the addon's index.js
 file's Ember addon methods like included and postprocessTree.
 This allows us to call the methods from tests easily.
 
