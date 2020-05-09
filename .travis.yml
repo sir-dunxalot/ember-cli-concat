@@ -3,7 +3,9 @@ language: node_js
 node_js:
   # we recommend testing addons with the same minimum supported node version as Ember CLI
   # so that your addon works for all apps
-  - "6"
+  - "10"
+
+dist: trusty
 
 addons:
   chrome: stable
@@ -11,12 +13,18 @@ addons:
 cache:
   yarn: true
 
+branches:
+  only:
+    - master
+    # npm version tags
+    - /^v\d+\.\d+\.\d+/
+
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
   - export PATH=$HOME/.yarn/bin:$PATH
 
 install:
-  - yarn install --no-lockfile --non-interactive
+  - yarn install --non-interactive
 
 # Build to dist so we can use it for the Broccoli tree
 # for tests, as if it was passed to the Ember addon
