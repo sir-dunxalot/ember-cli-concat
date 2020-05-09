@@ -13,27 +13,11 @@ addons:
 cache:
   yarn: true
 
-env:
-  global:
-    # See https://git.io/vdao3 for details.
-    - JOBS=1
-
 branches:
   only:
     - master
     # npm version tags
     - /^v\d+\.\d+\.\d+/
-
-jobs:
-  fast_finish: true
-
-  include:
-    # runs linting and tests with current locked deps
-    - stage: "Tests"
-      name: "Tests"
-      script:
-        - yarn lint
-        - yarn test:node
 
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash
