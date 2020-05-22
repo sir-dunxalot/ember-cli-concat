@@ -5,6 +5,7 @@
 var concatAndMap = require('broccoli-concat');
 var Funnel = require('broccoli-funnel');
 var mergeTrees = require('broccoli-merge-trees');
+var { join: joinPaths } = require('path');
 
 /* Helper Functions */
 
@@ -136,6 +137,18 @@ module.exports = {
 
   wrapScriptsInFunction: false, // TODO - Deprecate
 
+  /**
+  Optional override for environment rootURL
+
+  @property rootURL
+  @type String|null
+  @default null
+  */
+
+  rootURL: null,
+
+  _rootEnvURL: null,
+
   _outputPaths: null,
 
   /**
@@ -157,10 +170,12 @@ module.exports = {
   The contentFor hook is run once for each `content-for` in our application. `head` and `body`, which are the two we hook onto, are standard to Ember CLI builds and are found in the app's main HTML filem which is `app/index.html` by default.
 
   @method contentFor
-  @param contentForType {String} type The type of content-for this is being run for (e.g. head, body, etc)
+  @param {String} contentForType The type of content-for this is being run for (e.g. head, body, etc)
+  @param {Object} config Containing application configuration
   */
 
-  contentFor: function(contentForType) {
+  contentFor: function(contentForType, config) {
+    this._rootEnvURL = config && config.rootURL || this._rootEnvURL;
     if (this.enabled) {
       var ext, concat;
       if (contentForType === this.js.contentFor) {
@@ -208,6 +223,11 @@ module.exports = {
   getAssetTag: function(ext, path) {
     var closing;
 
+    var rootURL = this.rootURL || this._rootEnvURL;
+    if (rootURL && rootURL !== '/') {
+      path = joinPaths('/', rootURL, path);
+    }
+
     if (ext === 'js') {
       if (this.js.useAsync) {
         return '<script async src="' + path + '"></script>\n';
@@ -218,6 +238,10 @@ module.exports = {
 
       return '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
     }
+  },
+
+  config(env, ENV) {
+    this.rootURL = this.rootURL || ENV.rootURL;
   },
 
   /**

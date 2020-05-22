@@ -1,5 +1,6 @@
 var broccoli = require('broccoli');
 var defaultOptions = require('./fixtures/default-options');
+var defaultConfig = require('./fixtures/default-config');
 var emberCliConcat = require('../index'); // index.js
 var paths = require('./fixtures/paths');
 
@@ -57,7 +58,7 @@ module.exports = {
   getAssetTagsAsString: function(ext) {
     var contentForType = emberCliConcat[ext].contentFor;
 
-    return emberCliConcat.contentFor(contentForType).join();
+    return emberCliConcat.contentFor(contentForType, this.config()).join();
   },
 
   /**
@@ -104,5 +105,28 @@ module.exports = {
         outputPaths: paths.outputPaths
       }
     });
+  },
+
+  /**
+   Ensures the application's config is reset to the original state.
+   This is useful to run after each test of before a new Broccoli
+   build takes place.
+
+   @method resetDefaultConfig
+   */
+
+  resetDefaultConfig: function() {
+    return this._config = Object.assign({}, defaultConfig);
+  },
+
+  /**
+  Accepts an application environment config object to join with the existing
+  application configuration.
+
+  @method config
+  */
+
+  config: function(config) {
+    return this._config = Object.assign(this._config || {}, config || {});
   },
 };

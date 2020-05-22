@@ -1,6 +1,7 @@
 var chai = require('chai');
 var emberCliConcat = require('./ember-cli-concat');
 var paths = require('./fixtures/paths');
+var { join: joinPaths } = require('path');
 
 /* Test helpers */
 
@@ -9,10 +10,17 @@ var getOutputPath = emberCliConcat.getOutputPath;
 
 describe('Acceptance - Asset Tags', function() {
 
+  beforeEach(function() {
+    emberCliConcat.resetDefaultConfig();
+    emberCliConcat.resetDefaultOptions();
+  });
+
+  afterEach(function() {
+    emberCliConcat.resetDefaultConfig();
+  });
+
   it('renders all asset tags', function() {
     var tags;
-
-    emberCliConcat.resetDefaultOptions();
 
     /* Check JS content-for tags */
 
@@ -40,7 +48,6 @@ describe('Acceptance - Asset Tags', function() {
   it('renders asset tags with JS concatenation', function() {
     var tags;
 
-    emberCliConcat.resetDefaultOptions();
     emberCliConcat.setOptions({
       js: {
         concat: true
@@ -65,7 +72,6 @@ describe('Acceptance - Asset Tags', function() {
   it('renders asset tags with CSS concatenation', function() {
     var tags;
 
-    emberCliConcat.resetDefaultOptions();
     emberCliConcat.setOptions({
       css: {
         concat: true
@@ -90,7 +96,6 @@ describe('Acceptance - Asset Tags', function() {
   it('renders asset tags with JS and CSS concatenation', function() {
     var tags;
 
-    emberCliConcat.resetDefaultOptions();
     emberCliConcat.setOptions({
       js: {
         concat: true
@@ -116,7 +121,6 @@ describe('Acceptance - Asset Tags', function() {
   it('renders asset tags with JS and CSS concatenation with custom content-for hooks', function() {
     var tags;
 
-    emberCliConcat.resetDefaultOptions();
     emberCliConcat.setOptions({
       js: {
         contentFor: 'fish',
@@ -144,8 +148,6 @@ describe('Acceptance - Asset Tags', function() {
   it('renders style tags with and without closing tags', function() {
     var tags;
 
-    emberCliConcat.resetDefaultOptions();
-
     tags = emberCliConcat.getAssetTagsAsString('css');
 
     assert.include(tags, '">');
@@ -157,5 +159,61 @@ describe('Acceptance - Asset Tags', function() {
     tags = emberCliConcat.getAssetTagsAsString('css');
 
     assert.include(tags, '" />');
+  });
+
+  it('renders asset tags with JS and CSS concatenation with application environment configured rootURL', function() {
+    var tags;
+    var rootURL = '/config-root-url/';
+
+    emberCliConcat.config({ rootURL: rootURL });
+    emberCliConcat.setOptions({
+      js: {
+        concat: true
+      },
+      css: {
+        concat: true
+      }
+    });
+
+    /* Check JS content-for tags */
+
+    tags = emberCliConcat.getAssetTagsAsString('js');
+
+    assert.include(tags, joinPaths(rootURL, getOutputPath('js')));
+
+    /* Check CSS content-for tags */
+
+    tags = emberCliConcat.getAssetTagsAsString('css');
+
+    assert.include(tags, joinPaths(rootURL, getOutputPath('css')));
+  });
+
+  it('renders asset tags with JS and CSS concatenation with build configuration overridden rootURL', function() {
+    var tags;
+    var configRootURL = '/config-root-url/';
+    var buildRootURL = '/build-root-url/';
+
+    emberCliConcat.config({ rootURL: configRootURL });
+    emberCliConcat.setOptions({
+      rootURL: buildRootURL,
+      js: {
+        concat: true
+      },
+      css: {
+        concat: true
+      }
+    });
+
+    /* Check JS content-for tags */
+
+    tags = emberCliConcat.getAssetTagsAsString('js');
+
+    assert.include(tags, joinPaths(buildRootURL, getOutputPath('js')));
+
+    /* Check CSS content-for tags */
+
+    tags = emberCliConcat.getAssetTagsAsString('css');
+
+    assert.include(tags, joinPaths(buildRootURL, getOutputPath('css')));
   });
 });
