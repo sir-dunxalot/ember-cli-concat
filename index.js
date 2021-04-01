@@ -233,14 +233,14 @@ module.exports = {
       const scriptAttributes = [];
 
       if (this.js.useAsync) {
-        scriptAttributes.push(' async');
+        scriptAttributes.push('async');
       }
 
       if (this.js.useDefer) {
-        scriptAttributes.push(' defer');
+        scriptAttributes.push('defer');
       }
   
-      return '<script' + scriptAttributes.join('') + ' src="' + path + '"></script>\n';
+      return '<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n';
     } else {
       closing = this.useSelfClosingTags ? ' /' : '';
 
