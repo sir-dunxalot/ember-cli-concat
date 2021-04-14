@@ -49,7 +49,7 @@ module.exports = {
     footer: null,
     header: null,
     preserveOriginal: true,
-    preLoad: false,
+    preLoad: false
   },
 
   /**
@@ -239,6 +239,7 @@ module.exports = {
       if (this.css.preLoad) {
         return '<link rel="preload" href="' + path + '"' + closing + ' as="style">\n<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
       }
+      return '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
     }
   },
 
