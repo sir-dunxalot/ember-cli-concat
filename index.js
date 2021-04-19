@@ -40,7 +40,8 @@ module.exports = {
     footer: null,
     header: null,
     preserveOriginal: true,
-    useAsync: false
+    useAsync: false,
+    useDefer: false
   },
 
   css: {
@@ -229,10 +230,17 @@ module.exports = {
     }
 
     if (ext === 'js') {
+      const scriptAttributes = [];
+
       if (this.js.useAsync) {
-        return '<script async src="' + path + '"></script>\n';
+        scriptAttributes.push('async');
       }
-      return '<script src="' + path + '"></script>\n';
+
+      if (this.js.useDefer) {
+        scriptAttributes.push('defer');
+      }
+  
+      return '<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n';
     } else {
       closing = this.useSelfClosingTags ? ' /' : '';
 
