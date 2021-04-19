@@ -229,6 +229,11 @@ module.exports = {
       path = joinPaths('/', rootURL, path);
     }
 
+    function cleanTag(tagString) {
+      // https://stackoverflow.com/questions/3286874/remove-all-multiple-spaces-in-javascript-and-replace-with-single-space
+      return tagString.replace(/ +(?= )/g,'');
+    }
+
     if (ext === 'js') {
       const scriptAttributes = [];
 
@@ -240,11 +245,11 @@ module.exports = {
         scriptAttributes.push('defer');
       }
   
-      return '<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n';
+      return cleanTag('<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n');
     } else {
       closing = this.useSelfClosingTags ? ' /' : '';
 
-      return '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
+      return cleanTag('<link rel="stylesheet" href="' + path + '"' + closing + '>\n');
     }
   },
 
