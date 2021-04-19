@@ -40,7 +40,8 @@ module.exports = {
     footer: null,
     header: null,
     preserveOriginal: true,
-    useAsync: false
+    useAsync: false,
+    useDefer: false
   },
 
   css: {
@@ -229,17 +230,31 @@ module.exports = {
       path = joinPaths('/', rootURL, path);
     }
 
+    function cleanTag(tagString) {
+      // https://stackoverflow.com/questions/3286874/remove-all-multiple-spaces-in-javascript-and-replace-with-single-space
+      return tagString.replace(/ +(?= )/g,'');
+    }
+
     if (ext === 'js') {
+      const scriptAttributes = [];
+
       if (this.js.useAsync) {
-        return '<script async src="' + path + '"></script>\n';
+        scriptAttributes.push('async');
       }
-      return '<script src="' + path + '"></script>\n';
+
+      if (this.js.useDefer) {
+        scriptAttributes.push('defer');
+      }
+
+      return cleanTag('<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n');
     } else if (ext === 'css') {
       closing = this.useSelfClosingTags ? ' /' : '';
+
       if (this.css.preLoad) {
-        return '<link rel="preload" href="' + path + '"' + closing + ' as="style">\n<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
+        return cleanTag('<link rel="preload" href="' + path + '"' + closing + ' as="style">\n<link rel="stylesheet" href="' + path + '"' + closing + '>\n');
       }
-      return '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
+
+      return cleanTag('<link rel="stylesheet" href="' + path + '"' + closing + '>\n');
     }
   },
 
