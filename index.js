@@ -249,12 +249,13 @@ module.exports = {
       return cleanTag('<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n');
     } else if (ext === 'css') {
       closing = this.useSelfClosingTags ? ' /' : '';
+      let cssString = '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
 
       if (this.css.preLoad) {
-        return cleanTag('<link rel="preload" href="' + path + '"' + closing + ' as="style">\n<link rel="stylesheet" href="' + path + '"' + closing + '>\n');
+        cssString = '<link rel="preload" href="' + path + '"' + closing + ' as="style">\n' + cssString;
       }
 
-      return cleanTag('<link rel="stylesheet" href="' + path + '"' + closing + '>\n');
+      return cleanTag(cssString);
     }
   },
 
