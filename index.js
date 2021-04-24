@@ -49,7 +49,8 @@ module.exports = {
     contentFor: 'concat-css',
     footer: null,
     header: null,
-    preserveOriginal: true
+    preserveOriginal: true,
+    preLoad: false
   },
 
   /**
@@ -244,12 +245,17 @@ module.exports = {
       if (this.js.useDefer) {
         scriptAttributes.push('defer');
       }
-  
-      return cleanTag('<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n');
-    } else {
-      closing = this.useSelfClosingTags ? ' /' : '';
 
-      return cleanTag('<link rel="stylesheet" href="' + path + '"' + closing + '>\n');
+      return cleanTag('<script ' + scriptAttributes.join(' ') + ' src="' + path + '"></script>\n');
+    } else if (ext === 'css') {
+      closing = this.useSelfClosingTags ? ' /' : '';
+      let cssString = '<link rel="stylesheet" href="' + path + '"' + closing + '>\n';
+
+      if (this.css.preLoad) {
+        cssString = '<link rel="preload" href="' + path + '"' + closing + ' as="style">\n' + cssString;
+      }
+
+      return cleanTag(cssString);
     }
   },
 
